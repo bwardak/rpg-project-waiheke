@@ -8,6 +8,8 @@ let stone: string [] = [];
 let stoneGained: number = 0;
 let deleteInterval: number;
 let energyLevel: number = 100;
+let runAxePickaxeLogOnceWood: boolean = false;
+let runAxePickaxeLogOnceStone: boolean = false;
 
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
@@ -125,14 +127,14 @@ const handleGoToWoods = () => {
 const handleGatherWood = () => {
   if (
     logText.innerText === "You enter the still woods..." ||
-    logText.innerText ===  "You walk around the baren woods..."
+    logText.innerText === "You walk around the baren woods..." ||
+    logText.innerText.charAt(1) === "*"
   ) {
     logText.innerText = "";
   } 
   if (axes.length === 0){
     woodGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
   };  
-  console.log(woodGained);
 
   
   
@@ -155,12 +157,28 @@ const handleGatherWood = () => {
 
   energyAmount.innerText = `Energy: ${energyLevel - 12}`
   energyLevel -= 12
+
+  if (
+    wood.length >= 3 &&
+    stone.length >= 3 &&
+    logText.innerText.charAt(1) != "*" &&
+    !runAxePickaxeLogOnceWood
+  ) {
+    clearInterval(deleteInterval);
+    logText.innerText = `**YOU CAN NOW CRAFT A STONE AXE!**\n`;
+    logText.innerText += `**YOU CAN NOW CRAFT A STONE PICKAXE!**`;
+    console.log(logText.innerText);
+    console.log(logText.innerText.charAt(1));
+    runAxePickaxeLogOnceWood = true;
+    runAxePickaxeLogOnceStone = true;
+  }
 }
 
 const handleGatherStone = () => {
    if (
      logText.innerText === "You enter the still woods..." ||
-     logText.innerText === "You walk around the baren woods..."
+     logText.innerText === "You walk around the baren woods..." ||
+     logText.innerText.charAt(1) === "*"
    ) {
      logText.innerText = "";
    }
@@ -189,6 +207,14 @@ const handleGatherStone = () => {
 
    energyAmount.innerText = `Energy: ${energyLevel - 12}`;
    energyLevel -= 12;
+
+   if (wood.length >= 3 && stone.length >= 3 && !runAxePickaxeLogOnceStone) {
+     clearInterval(deleteInterval);
+     logText.innerText = `**YOU CAN NOW CRAFT A STONE AXE!** \n`;
+     logText.innerText += `**YOU CAN NOW CRAFT A STONE PICKAXE!**`;
+     runAxePickaxeLogOnceStone = true;
+     runAxePickaxeLogOnceWood = true;
+   }
 }
 
 const deleteWoodText = () => {
@@ -211,7 +237,10 @@ const deleteStoneText = () => {
   }
 };
 
+if (wood.length >= 3 && stone.length >= 3) {
 
+  
+}
 
 buttonStartGame.addEventListener("click", handleStartOfGameScreen)
 
