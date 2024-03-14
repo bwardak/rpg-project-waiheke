@@ -66,9 +66,14 @@ img {
     width: 520px;
 
     .button {
-      margin: 1%;
-      width: 70px;
+      margin: 10px;
+      min-width: 70px;
+      max-width: 100px;
       height: 30px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
     }
 
     p{
