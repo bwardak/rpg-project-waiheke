@@ -1,6 +1,7 @@
 import './style.scss'
 
 let axes: string[] = [];
+let pickaxes: string[] = [];
 let wood: string[] = [];
 let woodGained: number = 0;
 let stone: string [] = [];
@@ -59,6 +60,11 @@ if (!woodAmount) {
   throw new Error("Error with Wood Amount selector");
 }
 
+const stoneAmount = document.querySelector<HTMLParagraphElement>(".stone")
+if (!stoneAmount) {
+  throw new Error("Error with Stone Amount selector");
+}
+
 const energyAmount = document.querySelector<HTMLParagraphElement>(".energy")
 if (!energyAmount) {
   throw new Error("Error with Energy Amount selector");
@@ -112,7 +118,7 @@ const handleGoToWoods = () => {
 
   buttonTravel.removeEventListener("click", handleGoToWoods);
   buttonTravel.addEventListener("click", handleGatherWood);
-  buttonCrafting.removeEventListener("click", handleCraftingMenu)
+  // buttonCrafting.removeEventListener("click", handleCraftingMenu)
   buttonCrafting.addEventListener("click", handleGatherStone)
 }
 
@@ -137,12 +143,9 @@ const handleGatherWood = () => {
   }
   woodGained = 0;
   woodAmount.innerText = `Wood: ${wood.length.toString()}`
-  console.log(logText.innerText.length);
   if (logText.innerText.length > 55) {
     let splitLogText = logText.innerText.split("")
-    console.log(splitLogText)
     splitLogText.splice(0, 11)
-    console.log(splitLogText)
     logText.innerText = splitLogText.join("")
   }
   clearInterval(deleteInterval);
@@ -154,18 +157,61 @@ const handleGatherWood = () => {
   energyLevel -= 12
 }
 
+const handleGatherStone = () => {
+   if (
+     logText.innerText === "You enter the still woods..." ||
+     logText.innerText === "You walk around the baren woods..."
+   ) {
+     logText.innerText = "";
+   }
+   if (pickaxes.length === 0) {
+     stoneGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+   }
+   logText.innerText += `+${stoneGained} stone... \n`;
+   for (let i: number = 0; i < stoneGained; i++) {
+     stone.push("W");
+   }
+   stoneGained = 0;
+   stoneAmount.innerText = `Wood: ${stone.length.toString()}`;
+   if (logText.innerText.length > 60) {
+     let splitLogText = logText.innerText.split("");
+     splitLogText.splice(0, 12);
+     logText.innerText = splitLogText.join("");
+   }
+   clearInterval(deleteInterval);
+   if (
+     logText.innerText !== "You enter the still woods..." &&
+     logText.innerText.length >= 12 &&
+     logText.innerText !== "You walk around the baren woods..."
+   ) {
+     deleteInterval = setInterval(deleteStoneText, 1000);
+   }
 
+   energyAmount.innerText = `Energy: ${energyLevel - 12}`;
+   energyLevel -= 12;
+}
 
 const deleteWoodText = () => {
   let splitLogText = logText.innerText.split("");
   splitLogText.splice(0, 11);
   logText.innerText = splitLogText.join("");
-  console.log("Yo");
   if (logText.innerText.length < 11) {
   clearInterval(deleteInterval);
   logText.innerText = "You walk around the baren woods..."
   }  
 }
+
+const deleteStoneText = () => {
+  let splitLogText = logText.innerText.split("");
+  splitLogText.splice(0, 12);
+  logText.innerText = splitLogText.join("");
+  if (logText.innerText.length < 12) {
+    clearInterval(deleteInterval);
+    logText.innerText = "You walk around the baren woods...";
+  }
+};
+
+
 
 buttonStartGame.addEventListener("click", handleStartOfGameScreen)
 
