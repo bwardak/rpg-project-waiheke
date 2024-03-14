@@ -51,7 +51,7 @@ Minigame to fight monsters.
 
 ## Base foundation
 
-Can go from fireplace to woods
+#### Can go from fireplace to woods 
 
 Can craft Sword, Axe, Torch, Bed. Cook food.
 

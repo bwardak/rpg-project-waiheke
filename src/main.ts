@@ -1,5 +1,13 @@
 import './style.scss'
 
+let axes: string[] = [];
+let wood: string[] = [];
+let woodGained: number = 0;
+let stone: string [] = [];
+let stoneGained: number = 0;
+let deleteInterval: number;
+let energyLevel: number = 100;
+
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
   throw new Error("Error with Starting Game button selector");
@@ -46,8 +54,17 @@ if (!backgroundColor) {
   throw new Error("Error with Background Color selector");
 }
 
-// gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
-buttonStartGame.style.display = "none"
+const woodAmount = document.querySelector<HTMLParagraphElement>(".wood")
+if (!woodAmount) {
+  throw new Error("Error with Wood Amount selector");
+}
+
+const energyAmount = document.querySelector<HTMLParagraphElement>(".energy")
+if (!energyAmount) {
+  throw new Error("Error with Energy Amount selector");
+}
+gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
+// buttonStartGame.style.display = "none"
 
 type travel = {
   name: string;
@@ -93,8 +110,61 @@ const handleGoToWoods = () => {
   logText.innerText = "You enter the still woods..."
 
 
-  buttonTravel.removeEventListener("click", handleTravelMenu);
-  buttonTravel.addEventListener("click", handleGoToWoods);
+  buttonTravel.removeEventListener("click", handleGoToWoods);
+  buttonTravel.addEventListener("click", handleGatherWood);
+  buttonCrafting.removeEventListener("click", handleCraftingMenu)
+  buttonCrafting.addEventListener("click", handleGatherStone)
+}
+
+const handleGatherWood = () => {
+  if (
+    logText.innerText === "You enter the still woods..." ||
+    logText.innerText ===  "You walk around the baren woods..."
+  ) {
+    logText.innerText = "";
+  } 
+  if (axes.length === 0){
+    woodGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+  };  
+  console.log(woodGained);
+
+  
+  
+  logText.innerText += `+${woodGained} wood... \n`
+  
+  for (let i: number = 0; i < woodGained; i++){
+    wood.push("W");
+  }
+  woodGained = 0;
+  woodAmount.innerText = `Wood: ${wood.length.toString()}`
+  console.log(logText.innerText.length);
+  if (logText.innerText.length > 55) {
+    let splitLogText = logText.innerText.split("")
+    console.log(splitLogText)
+    splitLogText.splice(0, 11)
+    console.log(splitLogText)
+    logText.innerText = splitLogText.join("")
+  }
+  clearInterval(deleteInterval);
+  if (logText.innerText !== "You enter the still woods..." && logText.innerText.length >= 11 && logText.innerText !== "You walk around the baren woods...") {
+     deleteInterval = setInterval(deleteWoodText, 1000)
+  }
+
+  energyAmount.innerText = `Energy: ${energyLevel - 12}`
+  energyLevel -= 12
+}
+
+
+
+const deleteWoodText = () => {
+  let splitLogText = logText.innerText.split("");
+  splitLogText.splice(0, 11);
+  logText.innerText = splitLogText.join("");
+  console.log("Yo");
+  if (logText.innerText.length < 11) {
+  clearInterval(deleteInterval);
+  logText.innerText = "You walk around the baren woods..."
+  }  
 }
 
 buttonStartGame.addEventListener("click", handleStartOfGameScreen)
