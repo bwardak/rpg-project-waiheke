@@ -4,9 +4,11 @@
 
 <!-- GATHERING LOGS DELETES THE MESSAGES INCORRECTLY IF BOTH ARE PRESSED -> ADD CONDITION OF IF 4TH CHAR IS S OR W -->
 
-<!-- Make objects, on button run obecjts with functions -->
+#### Make objects, on button run obecjts with functions
 
 <!-- AFTER COMPLETING FEATURE ONE SORT SCSS EG VARIABLES -->
+
+<!-- Location images dont load accurately -->
 
 # Order of Progress
 

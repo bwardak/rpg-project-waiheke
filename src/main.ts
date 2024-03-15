@@ -10,7 +10,7 @@ let deleteInterval: number;
 let energyLevel: number = 100;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
-let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
+// let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 let currentBackgroundColor: string = "rgb(56, 34, 8)";
 let travelButtonPreviousFunction: (() => void) | null = null;
 let craftingButtonPreviousFunction: (() => void) | null = null;
@@ -114,7 +114,7 @@ type AreasArray = Areas[];
   
 const handleChangingScreenContent = (area: Areas) => {
   locationImage.src = area.imageSrc
-  currentImageSrc = locationImage.src
+  // currentImageSrc = locationImage.src
 
   narrativeText.innerText = area.areaText
   
@@ -177,9 +177,9 @@ const handleChangingScreenContent = (area: Areas) => {
 
 const handleGoHome = () => {
   handleChangingScreenContent(areas[0])
-  areas[1].imageSrc =
-    "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg";
-  areas[1].backgroundColor = "rgb(56, 34, 8)";
+  // areas[1].imageSrc =
+  //   "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg";
+  // areas[1].backgroundColor = "rgb(56, 34, 8)";
   buttonAll.forEach((button) => {
     button.style.display = "initial"
   })
@@ -187,10 +187,10 @@ const handleGoHome = () => {
 
 const handleGoToTravel = () => {
   console.log("called");
-  console.log(currentImageSrc);
+  // console.log(currentImageSrc);
   console.log(locationImage.src);
   
-  currentImageSrc = areas[1].imageSrc
+  // currentImageSrc = areas[1].imageSrc
   
   
   handleChangingScreenContent(areas[1])
@@ -213,15 +213,49 @@ const handleCraftingMenu = () => {
   buttonAll.forEach((button) => {
     button.style.display = "none"
   })
-  buttonTravel.style.display = "initial"
+  buttonTravel.style.display = "initial";
+  handleAxeAndPickaxeCraftStone();
+  // locationImage.style.height = "450px"
+  // locationImage.style.width = "900px"
+  
 }
 
 const handleAxeAndPickaxeCraftStone = () => {
   if(wood.length >= 3 && stone.length >= 3){
-
-  }
-
+    buttonCrafting.style.display = "initial";
+    buttonSleep.style.display = "initial"
+  };
 }
+
+const buyAxe = () => {
+  if(wood.length >= 3 && stone.length >= 3 && axes[0] !== "stone axe"){
+    axes.push("stone axe");
+    console.log(wood, stone);
+    wood.splice(0, 3)
+    stone.splice(0, 3)
+    woodAmount.innerText = `Wood: ${wood.length.toString()}`
+    stoneAmount.innerText = `Stone: ${stone.length.toString()}`
+    console.log(wood, stone);
+    logText.innerText = "You made a stone axe!";
+  } else if(axes[0] === "stone axe") {
+    logText.innerText = "You already own a stone axe!"
+  }
+}
+
+const buyPickaxe = () => {
+  if (wood.length >= 3 && stone.length >= 3 && pickaxes[0] !== "stone pickaxe") {
+    pickaxes.push("stone pickaxe");
+    console.log(wood, stone);
+    wood.splice(0, 3);
+    stone.splice(0, 3);
+    woodAmount.innerText = `Wood: ${wood.length.toString()}`;
+    stoneAmount.innerText = `Stone: ${stone.length.toString()}`;
+    console.log(wood, stone);
+    logText.innerText = "You made a stone pickaxe!";
+  } else if (axes[0] === "stone axe") {
+    logText.innerText = "You already own a stone pickaxe!";
+  }
+};
 
 const handleSleepOption = () => {
   console.log("hi")
@@ -250,7 +284,9 @@ const handleGatherWood = () => {
   } 
   if (axes.length === 0){
     woodGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
-  };  
+  } else if (axes.length === 1) {
+    woodGained += Math.floor(Math.random() * (5 - 2 + 1)) + 2;
+  }
 
   
   
@@ -300,10 +336,14 @@ const handleGatherStone = () => {
    }
    if (pickaxes.length === 0) {
      stoneGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+   } else if (pickaxes.length === 1) {
+    stoneGained += Math.floor(Math.random() * (5 - 2 + 1)) + 2;
    }
+
+
    logText.innerText += `+${stoneGained} stone... \n`;
    for (let i: number = 0; i < stoneGained; i++) {
-     stone.push("W");
+     stone.push("S");
    }
    stoneGained = 0;
    stoneAmount.innerText = `Stone: ${stone.length.toString()}`;
@@ -362,8 +402,7 @@ if (wood.length >= 3 && stone.length >= 3) {
 const areas: AreasArray = [
   {
     name: "Home",
-    imageSrc:
-      "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg",
+    imageSrc: "./src/images/campfire.jpeg",
     "button text": ["Travel", "Crafting", "Sleep", "Inventory"],
     "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption],
     areaText:
@@ -373,7 +412,7 @@ const areas: AreasArray = [
   },
   {
     name: "travel",
-    imageSrc: currentImageSrc,
+    imageSrc: "./src/images/travel.jpeg",
     "button text": ["Woods", "Home", "", ""],
     "button action": [handleGoTooWoods, handleGoHome],
     areaText: "The woods beckon",
@@ -393,14 +432,14 @@ const areas: AreasArray = [
   },
   {
     name: "crafting",
-    imageSrc: "https://i.imgur.com/cesUNqa.jpeg",
+    imageSrc: "./src/images/man-crafting.jpeg",
     "button text": [
       "Back to campfire",
       "Craft Stone Axe",
       "Craft Stone Pickaxe",
       "",
     ],
-    "button action": [handleGoHome],
+    "button action": [handleGoHome, buyAxe, buyPickaxe],
     areaText: "You trudge over to your workbench",
     backgroundColor: "#5e3718",
     areaLogText: "You go to your crafting station",

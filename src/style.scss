@@ -33,10 +33,11 @@ body {
   border: 2px solid #ae965e;
 }
 
-img {
+.location-image {
   height: 396px;
   width: 746px;
   object-fit: cover;
+  overflow: hidden;
 }
 
 .game-block__text-container {
