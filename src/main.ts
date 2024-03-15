@@ -10,6 +10,9 @@ let deleteInterval: number;
 let energyLevel: number = 100;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
+let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
+let currentBackgroundColor: string = "rgb(56, 34, 8)";
+let lastFunction;
 
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
@@ -71,60 +74,106 @@ const energyAmount = document.querySelector<HTMLParagraphElement>(".energy")
 if (!energyAmount) {
   throw new Error("Error with Energy Amount selector");
 }
-gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
-// buttonStartGame.style.display = "none"
 
-type travel = {
-  name: string;
-  "button text": string;
-  "button functions"?: void;
-  areaText: string;
+const buttonSleep = document.querySelector<HTMLButtonElement>(".button--sleep")
+if (!buttonSleep) {
+  throw new Error("Error with Sleep Button selector");
 }
 
-const travel = [
-  {
-    name: "Woods",
-    "button text": "Woods",
-    // "button function": ,
-    text: "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows."
-  }
-]
-  
+const buttonInventory = document.querySelector<HTMLButtonElement>(".button--inventory");
+if (!buttonInventory) {
+  throw new Error("Error with Inventory Button selector");
+}
 
+const buttonAll = document.querySelectorAll<HTMLButtonElement>(".button")
+if (!buttonAll) {
+  throw new Error("Error with Button All selector");
+}
+
+// gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
+buttonStartGame.style.display = "none"
+
+type Areas = {
+  name: string;
+  imageSrc: string;
+  "button text": string[];
+  "button action": any[];
+  areaText: string;
+  backgroundColor: string;
+  areaLogText: string;
+}
+
+type AreasArray = Areas[];
+
+
+
+
+  
+const handleChangingScreenContent = (area: Areas) => {
+  locationImage.src = area.imageSrc
+  backgroundColor.style.backgroundColor = area.backgroundColor
+  buttonTravel.innerText = area["button text"][0];
+  if (buttonTravel.innerText === ""){
+    buttonTravel.style.display = "none"
+  }
+  buttonCrafting.innerText = area["button text"][1];
+  if (buttonCrafting.innerText === "") {
+    buttonCrafting.style.display = "none";
+  }
+  buttonSleep.innerText = area["button text"][2];
+  if (buttonSleep.innerText === "") {
+    buttonSleep.style.display = "none";
+  }
+  buttonInventory.innerText = area["button text"][3];
+  if (buttonInventory.innerText === "") {
+    buttonInventory.style.display = "none";
+  }
+  
+  // buttonTravel.removeEventListener("click", handleTravelMenu)
+  buttonTravel.addEventListener("click", area["button action"][0])
+
+  lastFunction = area["button action"][0];
+
+  logText.innerHTML = area.areaLogText
+  console.log("I am used");
+  
+}
+
+const handleGoHome = () => {
+  handleChangingScreenContent(areas[0])
+  currentImageSrc =
+    "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg";
+}
+
+const handleGoToTravel = () => {
+  handleChangingScreenContent(areas[1])
+}
+
+const handleGoTooWoods = () => {
+  handleChangingScreenContent(areas[2])
+  currentImageSrc =
+    "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg";
+  currentBackgroundColor = "#111a10";
+}
+
+const handleCraftingMenu = () => {
+  console.log("hi")
+}
+
+const handleSleepOption = () => {
+  console.log("hi")
+}
 
 const handleStartOfGameScreen = () => {
   gameContainer.style.display = "initial"
   buttonStartGame.style.display = "none"
 }
 
-const handleTravelMenu = () => {
-  buttonTravel.innerText = "Woods";
-  buttonCrafting.style.display = "none";
-  buttonInfo.innerText = "Where to: "
-  logText.innerText = "You have chosen to set out..."
 
-  buttonTravel.removeEventListener("click", handleTravelMenu)
-  buttonTravel.addEventListener("click", handleGoToWoods)
-};
-
-const handleGoToWoods = () => {
-  locationImage.src = "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg";
-  narrativeText.innerText = "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows."
-  backgroundColor.style.backgroundColor = "#111a10";
-  buttonInfo.innerText = "Choose an action...";
-  buttonCrafting.style.display = "initial";
-  buttonCrafting.innerText = "Gather stone";
-  buttonTravel.innerText = "Gather wood"
-  logText.innerText = "You enter the still woods..."
-
-
-  buttonTravel.removeEventListener("click", handleGoToWoods);
-  buttonTravel.addEventListener("click", handleGatherWood);
-  // buttonCrafting.removeEventListener("click", handleCraftingMenu)
-  buttonCrafting.addEventListener("click", handleGatherStone)
-}
 
 const handleGatherWood = () => {
+  console.log(logText.innerText);
+  
   if (
     logText.innerText === "You enter the still woods..." ||
     logText.innerText === "You walk around the baren woods..." ||
@@ -242,9 +291,44 @@ if (wood.length >= 3 && stone.length >= 3) {
   
 }
 
+const areas: AreasArray = [
+  {
+    name: "Home",
+    imageSrc:
+      "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg",
+    "button text": ["Travel", "Crafting", "Sleep", "Inventory"],
+    "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption],
+    areaText: narrativeText.innerText,
+    backgroundColor: "rgb(56, 34, 8)",
+    areaLogText: "You have started your journey survivor.",
+  },
+  {
+    name: "travel",
+    imageSrc: currentImageSrc,
+    "button text": ["Woods", "Home", "", ""],
+    "button action": [handleGoTooWoods, handleGoHome],
+    areaText:
+      "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
+    backgroundColor: currentBackgroundColor,
+    areaLogText: "You have chosen to set out...",
+  },
+  {
+    name: "woods",
+    imageSrc:
+      "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg",
+    "button text": ["Gather Wood", "Gather Stone", "Travel", ""],
+    "button action": [handleGatherWood, handleGatherStone, handleGoToTravel],
+    areaText:
+      "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
+    backgroundColor: "#111a10",
+    areaLogText: "You enter the still woods...",
+  },
+];
+
 buttonStartGame.addEventListener("click", handleStartOfGameScreen)
 
-buttonTravel.addEventListener("click", handleTravelMenu);
+buttonTravel.addEventListener("click", handleGoToTravel);
+// buttonTravel.onclick = handleGoToTravel
 
 
 

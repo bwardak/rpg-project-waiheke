@@ -2,7 +2,11 @@
 
 #### AI images?
 
-GATHERING LOGS DELETES THE MESSAGES INCORRECTLY IF BOTH ARE PRESSED -> ADD CONDITION OF IF 4TH CHAR IS S OR W
+<!-- GATHERING LOGS DELETES THE MESSAGES INCORRECTLY IF BOTH ARE PRESSED -> ADD CONDITION OF IF 4TH CHAR IS S OR W -->
+
+<!-- Make objects, on button run obecjts with functions -->
+
+<!-- AFTER COMPLETING FEATURE ONE SORT SCSS EG VARIABLES -->
 
 # Order of Progress
 
@@ -69,7 +73,7 @@ Cave/Mining.
 
 Can make stronger tools.
 
-Go from cabing or woods to mine.
+Go from cabin or woods to mine.
 
 ## Feature 3
 
