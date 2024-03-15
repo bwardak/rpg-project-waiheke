@@ -12,7 +12,7 @@ let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
 let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 let currentBackgroundColor: string = "rgb(56, 34, 8)";
-let lastFunction;
+let travelButtonPreviousFunction: (() => void) | null = null;
 
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
@@ -90,8 +90,8 @@ if (!buttonAll) {
   throw new Error("Error with Button All selector");
 }
 
-// gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
-buttonStartGame.style.display = "none"
+gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
+// buttonStartGame.style.display = "none"
 
 type Areas = {
   name: string;
@@ -100,7 +100,7 @@ type Areas = {
   "button action": any[];
   areaText: string;
   backgroundColor: string;
-  areaLogText: string;
+  // areaLogText: string;
 }
 
 type AreasArray = Areas[];
@@ -129,12 +129,21 @@ const handleChangingScreenContent = (area: Areas) => {
     buttonInventory.style.display = "none";
   }
   
-  // buttonTravel.removeEventListener("click", handleTravelMenu)
+   if (travelButtonPreviousFunction) {
+     buttonTravel.removeEventListener("click", travelButtonPreviousFunction);
+   }
+
+  console.log("Adding event listener for buttonTravel:", area["button action"][0]);
   buttonTravel.addEventListener("click", area["button action"][0])
 
-  lastFunction = area["button action"][0];
+  travelButtonPreviousFunction = area["button action"][0];
 
-  logText.innerHTML = area.areaLogText
+  if (area.name === "Home") {
+    buttonTravel.addEventListener("click", area["button action"][0]);
+    travelButtonPreviousFunction = area["button action"][0];
+  }
+
+  
   console.log("I am used");
   
 }
@@ -143,17 +152,26 @@ const handleGoHome = () => {
   handleChangingScreenContent(areas[0])
   currentImageSrc =
     "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg";
+  logText.innerText = "You have started your journey survivor.";
 }
 
 const handleGoToTravel = () => {
+  console.log("called");
+  
   handleChangingScreenContent(areas[1])
+  logText.innerText = "You have chosen to set out...";
 }
 
 const handleGoTooWoods = () => {
+  console.log("function called");
+  
   handleChangingScreenContent(areas[2])
   currentImageSrc =
     "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg";
   currentBackgroundColor = "#111a10";
+  logText.innerText = "You enter the still woods...";
+  console.log("woods");
+  
 }
 
 const handleCraftingMenu = () => {
@@ -167,6 +185,7 @@ const handleSleepOption = () => {
 const handleStartOfGameScreen = () => {
   gameContainer.style.display = "initial"
   buttonStartGame.style.display = "none"
+  handleGoHome()
 }
 
 
@@ -300,7 +319,7 @@ const areas: AreasArray = [
     "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption],
     areaText: narrativeText.innerText,
     backgroundColor: "rgb(56, 34, 8)",
-    areaLogText: "You have started your journey survivor.",
+    // areaLogText: "You have started your journey survivor.",
   },
   {
     name: "travel",
@@ -310,7 +329,7 @@ const areas: AreasArray = [
     areaText:
       "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
     backgroundColor: currentBackgroundColor,
-    areaLogText: "You have chosen to set out...",
+    // areaLogText: "You have chosen to set out...",
   },
   {
     name: "woods",
@@ -321,13 +340,13 @@ const areas: AreasArray = [
     areaText:
       "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
     backgroundColor: "#111a10",
-    areaLogText: "You enter the still woods...",
+    // areaLogText: "You enter the still woods...",
   },
 ];
 
 buttonStartGame.addEventListener("click", handleStartOfGameScreen)
 
-buttonTravel.addEventListener("click", handleGoToTravel);
+
 // buttonTravel.onclick = handleGoToTravel
 
 
