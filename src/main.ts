@@ -13,6 +13,9 @@ let runAxePickaxeLogOnceStone: boolean = false;
 let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 let currentBackgroundColor: string = "rgb(56, 34, 8)";
 let travelButtonPreviousFunction: (() => void) | null = null;
+let craftingButtonPreviousFunction: (() => void) | null = null;
+let sleepButtonPreviousFunction: (() => void) | null = null;
+let inventoryButtonPreviousFunction: (() => void) | null = null;
 
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
@@ -100,7 +103,7 @@ type Areas = {
   "button action": any[];
   areaText: string;
   backgroundColor: string;
-  // areaLogText: string;
+  areaLogText: string;
 }
 
 type AreasArray = Areas[];
@@ -111,37 +114,61 @@ type AreasArray = Areas[];
   
 const handleChangingScreenContent = (area: Areas) => {
   locationImage.src = area.imageSrc
+  currentImageSrc = locationImage.src
+
+  narrativeText.innerText = area.areaText
+  
   backgroundColor.style.backgroundColor = area.backgroundColor
+
+  buttonTravel.style.display = "initial";
   buttonTravel.innerText = area["button text"][0];
   if (buttonTravel.innerText === ""){
     buttonTravel.style.display = "none"
   }
+
+  buttonCrafting.style.display = "initial";
   buttonCrafting.innerText = area["button text"][1];
   if (buttonCrafting.innerText === "") {
     buttonCrafting.style.display = "none";
   }
+
+  buttonSleep.style.display = "initial";
   buttonSleep.innerText = area["button text"][2];
   if (buttonSleep.innerText === "") {
     buttonSleep.style.display = "none";
   }
+
+  buttonInventory.style.display = "initial";
   buttonInventory.innerText = area["button text"][3];
   if (buttonInventory.innerText === "") {
     buttonInventory.style.display = "none";
   }
   
-   if (travelButtonPreviousFunction) {
-     buttonTravel.removeEventListener("click", travelButtonPreviousFunction);
-   }
-
-  console.log("Adding event listener for buttonTravel:", area["button action"][0]);
+  if (travelButtonPreviousFunction) {
+    buttonTravel.removeEventListener("click", travelButtonPreviousFunction);
+  }
   buttonTravel.addEventListener("click", area["button action"][0])
-
   travelButtonPreviousFunction = area["button action"][0];
 
-  if (area.name === "Home") {
-    buttonTravel.addEventListener("click", area["button action"][0]);
-    travelButtonPreviousFunction = area["button action"][0];
+  if (craftingButtonPreviousFunction) {
+    buttonCrafting.removeEventListener("click", craftingButtonPreviousFunction);
   }
+  buttonCrafting.addEventListener("click", area["button action"][1]);
+  craftingButtonPreviousFunction = area["button action"][1];
+
+  if (sleepButtonPreviousFunction) {
+    buttonSleep.removeEventListener("click", sleepButtonPreviousFunction);
+  }
+  buttonSleep.addEventListener("click", area["button action"][2]);
+  sleepButtonPreviousFunction = area["button action"][2];
+
+  if (inventoryButtonPreviousFunction) {
+    buttonInventory.removeEventListener("click", inventoryButtonPreviousFunction);
+  }
+  buttonInventory.addEventListener("click", area["button action"][3]);
+  inventoryButtonPreviousFunction = area["button action"][3];
+
+  logText.innerText = area.areaLogText
 
   
   console.log("I am used");
@@ -150,36 +177,57 @@ const handleChangingScreenContent = (area: Areas) => {
 
 const handleGoHome = () => {
   handleChangingScreenContent(areas[0])
-  currentImageSrc =
+  areas[1].imageSrc =
     "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg";
-  logText.innerText = "You have started your journey survivor.";
+  areas[1].backgroundColor = "rgb(56, 34, 8)";
+  buttonAll.forEach((button) => {
+    button.style.display = "initial"
+  })
 }
 
 const handleGoToTravel = () => {
   console.log("called");
+  console.log(currentImageSrc);
+  console.log(locationImage.src);
+  
+  currentImageSrc = areas[1].imageSrc
+  
   
   handleChangingScreenContent(areas[1])
-  logText.innerText = "You have chosen to set out...";
 }
 
 const handleGoTooWoods = () => {
   console.log("function called");
   
   handleChangingScreenContent(areas[2])
-  currentImageSrc =
+  areas[1].imageSrc =
     "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg";
-  currentBackgroundColor = "#111a10";
+  areas[1].backgroundColor = "#111a10";
   logText.innerText = "You enter the still woods...";
   console.log("woods");
   
 }
 
 const handleCraftingMenu = () => {
-  console.log("hi")
+  handleChangingScreenContent(areas[3])
+  buttonAll.forEach((button) => {
+    button.style.display = "none"
+  })
+  buttonTravel.style.display = "initial"
+}
+
+const handleAxeAndPickaxeCraftStone = () => {
+  if(wood.length >= 3 && stone.length >= 3){
+
+  }
+
 }
 
 const handleSleepOption = () => {
   console.log("hi")
+  energyLevel = 100;
+  energyAmount.innerText = `Energy: ${energyLevel}`
+  
 }
 
 const handleStartOfGameScreen = () => {
@@ -258,7 +306,7 @@ const handleGatherStone = () => {
      stone.push("W");
    }
    stoneGained = 0;
-   stoneAmount.innerText = `Wood: ${stone.length.toString()}`;
+   stoneAmount.innerText = `Stone: ${stone.length.toString()}`;
    if (logText.innerText.length > 60) {
      let splitLogText = logText.innerText.split("");
      splitLogText.splice(0, 12);
@@ -289,9 +337,10 @@ const deleteWoodText = () => {
   let splitLogText = logText.innerText.split("");
   splitLogText.splice(0, 11);
   logText.innerText = splitLogText.join("");
-  if (logText.innerText.length < 11) {
-  clearInterval(deleteInterval);
-  logText.innerText = "You walk around the baren woods..."
+  if (
+    logText.innerText.length < 11 ) {
+    clearInterval(deleteInterval);
+    logText.innerText = "You walk around the baren woods...";
   }  
 }
 
@@ -317,19 +366,19 @@ const areas: AreasArray = [
       "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg",
     "button text": ["Travel", "Crafting", "Sleep", "Inventory"],
     "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption],
-    areaText: narrativeText.innerText,
+    areaText:
+      "Alone in the woods, he sat by the fire's dwindling light, a silent witness to his world reduced to ash. With nothing left but memories, he found solace in the crackling flames, a flicker of hope amidst the desolation. In the stillness of the night, he pondered his next move, knowing that from the embers of loss, resilience would rise anew.",
     backgroundColor: "rgb(56, 34, 8)",
-    // areaLogText: "You have started your journey survivor.",
+    areaLogText: "You have started your journey survivor.",
   },
   {
     name: "travel",
     imageSrc: currentImageSrc,
     "button text": ["Woods", "Home", "", ""],
     "button action": [handleGoTooWoods, handleGoHome],
-    areaText:
-      "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
+    areaText: "The woods beckon",
     backgroundColor: currentBackgroundColor,
-    // areaLogText: "You have chosen to set out...",
+    areaLogText: "You have chosen to set out...",
   },
   {
     name: "woods",
@@ -340,7 +389,21 @@ const areas: AreasArray = [
     areaText:
       "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
     backgroundColor: "#111a10",
-    // areaLogText: "You enter the still woods...",
+    areaLogText: "You enter the still woods...",
+  },
+  {
+    name: "crafting",
+    imageSrc: "https://i.imgur.com/cesUNqa.jpeg",
+    "button text": [
+      "Back to campfire",
+      "Craft Stone Axe",
+      "Craft Stone Pickaxe",
+      "",
+    ],
+    "button action": [handleGoHome],
+    areaText: "You trudge over to your workbench",
+    backgroundColor: "#5e3718",
+    areaLogText: "You go to your crafting station",
   },
 ];
 

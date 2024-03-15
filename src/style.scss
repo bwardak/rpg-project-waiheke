@@ -69,7 +69,8 @@ img {
       margin: 10px;
       min-width: 70px;
       max-width: 100px;
-      height: 30px;
+      min-height: 30px;
+      max-height: 70px;
       display: inline-flex;
       justify-content: center;
       align-items: center;
