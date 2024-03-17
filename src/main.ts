@@ -3,6 +3,7 @@ import './style.scss'
 let axes: string[] = [];
 let pickaxes: string[] = [];
 let swords: string[] = [];
+let bed: string[] = [];
 let wood: string[] = [];
 let woodGained: number = 0;
 let stone: string [] = [];
@@ -220,17 +221,20 @@ const handleCraftingMenu = () => {
     button.style.display = "none"
   })
   buttonTravel.style.display = "initial";
-  handleAxeAndPickaxeCraftStone();
-  // locationImage.style.height = "450px"
-  // locationImage.style.width = "900px"
+  handleCraftsShowing();
+  
   
 }
 
-const handleAxeAndPickaxeCraftStone = () => {
+const handleCraftsShowing = () => {
   if(wood.length >= 3 && stone.length >= 3){
     buttonCrafting.style.display = "initial";
     buttonSleep.style.display = "initial"
   };
+
+  if (wood.length >= 10 && wool.length >= 4){
+    buttonInventory.style.display = "initial"
+  }
 }
 
 const buyAxe = () => {
@@ -263,11 +267,37 @@ const buyPickaxe = () => {
   }
 };
 
+const buyBed = () => {
+  if (wood.length >= 10 && wool.length >= 4 && bed[0] !== "bed"){
+    bed.push("bed");
+    wood.splice(0, 10);
+    wool.splice(0, 4);
+    woodAmount.innerText = `Wood: ${wood.length.toString()}`;
+    // woolamount.innertext
+    logText.innerText = "You made a bed!"
+  } else if (axes[0] === "bed") {
+    logText.innerText = "You already own a bed!"
+  }
+}
+
 const handleSleepOption = () => {
-  console.log("hi")
-  energyLevel = 100;
-  energyAmount.innerText = `Energy: ${energyLevel}`
+  if (bed[0] !== "bed") {
+    if (energyLevel < 50){
+      energyLevel += 50;
+      energyAmount.innerText = `Energy: ${energyLevel}`;
+    } else if (energyLevel > 50){
+      energyLevel = 100;
+      energyAmount.innerText = `Energy: ${energyLevel}`;
+    }
+  } else if (bed[0] === "bed") {
+    energyLevel = 100;
+    energyAmount.innerText = `Energy: ${energyLevel}`;
+  }
   
+}
+
+const handleOpenInventory = () => {
+  handleChangingScreenContent(areas[4])
 }
 
 const handleStartOfGameScreen = () => {
@@ -312,9 +342,9 @@ const handleGatherWood = () => {
   if (logText.innerText !== "You enter the still woods..." && logText.innerText.length >= 12 && logText.innerText !== "You walk around the baren woods...") {
      deleteInterval = setInterval(deleteWoodText, 1000)
   }
-
-  energyAmount.innerText = `Energy: ${energyLevel - 12}`
   energyLevel -= 12
+  energyAmount.innerText = `Energy: ${energyLevel}`
+  
 
   if (
     wood.length >= 3 &&
@@ -366,9 +396,9 @@ const handleGatherStone = () => {
    ) {
      deleteInterval = setInterval(deleteStoneText, 1000);
    }
-
-   energyAmount.innerText = `Energy: ${energyLevel - 12}`;
    energyLevel -= 12;
+   energyAmount.innerText = `Energy: ${energyLevel}`;
+   
 
    if (wood.length >= 3 && stone.length >= 3 && !runAxePickaxeLogOnceStone) {
      clearInterval(deleteInterval);
@@ -406,13 +436,13 @@ const handleGoHunt = () => {
   console.log(animalChance);
   
   if (swords.length === 0){
-    meatGained += Math.floor(Math.random() * (1 - 0 + 1)) + 0;
-    woolGained += Math.floor(Math.random() * (1 - 0 + 1)) + 0;
-    antlerGained += Math.floor(Math.random() * (1 - 0 + 1)) + 0;
+    meatGained += Math.floor(Math.random() * (1 - 0 + 1))
+    woolGained += 1
+    antlerGained += 1
   } else if (swords.length === 1) {
-    meatGained += Math.floor(Math.random() * (3 - 0 + 1)) + 0;
-    woolGained += Math.floor(Math.random() * (3 - 0 + 1)) + 0;
-    antlerGained += Math.floor(Math.random() * (2 - 0 + 1)) + 0;
+    meatGained += Math.floor(Math.random() * (3 - 0 + 1))
+    woolGained += Math.floor(Math.random() * (3 - 0 + 1))
+    antlerGained += Math.floor(Math.random() * (2 - 0 + 1))
   }
 
   if (animalChance > 8) {
@@ -424,22 +454,29 @@ const handleGoHunt = () => {
       } else {
         logText.innerText += `You found a sheep... +${meatGained} meat & +${woolGained} wool... \n`;
         for (let i: number = 0; i < meatGained; i++) {
-          meat.push("S");
+          meat.push("meat");
         }
         meatGained = 0;
         for (let i: number = 0; i < woolGained; i++) {
-          wool.push("S");
+          wool.push("wool");
         }
         woolGained = 0;
         ;
+        energyLevel -= 12;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
       }
     }
     else {
       if (meatGained === 0){
         logText.innerText += `You failed to find something. \n`;
       } else {
-        meat.push("meat");
-        logText.innerText += `You found a sheep... +${meatGained} meat... \n`
+        for (let i: number = 0; i < meatGained; i++) {
+          meat.push("meat");
+        }
+        logText.innerText += `You found a sheep... +${meatGained} meat... \n`;
+        meatGained = 0;
+        energyLevel -= 12;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
       }
     }
   } else if (animalChance > 4) {
@@ -451,20 +488,27 @@ const handleGoHunt = () => {
       } else {
         logText.innerText += `You found a deer... +${meatGained} meat & +${antlerGained} antlers... \n`;
         for (let i: number = 0; i < meatGained; i++) {
-          meat.push("S");
+          meat.push("meat");
         }
         meatGained = 0;
         for (let i: number = 0; i < antlerGained; i++) {
-          antler.push("S");
+          antler.push("antler");
         }
         antlerGained = 0;
+        energyLevel -= 12;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
       }
     } else {
       if (meatGained === 0) {
         logText.innerText += `You failed to find something. \n`;
       } else {
-        meat.push("meat");
+        for (let i: number = 0; i < meatGained; i++) {
+          meat.push("meat");
+        }
         logText.innerText += `You found a deer... +${meatGained} meat... \n`;
+        meatGained = 0;
+        energyLevel -= 12;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
       }
     }
   }
@@ -479,7 +523,7 @@ const areas: AreasArray = [
     name: "Home",
     imageSrc: "./src/images/campfire.jpeg",
     "button text": ["Travel", "Crafting", "Sleep", "Inventory"],
-    "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption],
+    "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption, handleOpenInventory],
     areaText:
       "Alone in the woods, he sat by the fire's dwindling light, a silent witness to his world reduced to ash. With nothing left but memories, he found solace in the crackling flames, a flicker of hope amidst the desolation. In the stillness of the night, he pondered his next move, knowing that from the embers of loss, resilience would rise anew.",
     backgroundColor: "#261705",
@@ -499,7 +543,12 @@ const areas: AreasArray = [
     imageSrc:
       "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg",
     "button text": ["Gather Wood", "Gather Stone", "Hunt", "Travel"],
-    "button action": [handleGatherWood, handleGatherStone, handleGoHunt, handleGoToTravel],
+    "button action": [
+      handleGatherWood,
+      handleGatherStone,
+      handleGoHunt,
+      handleGoToTravel,
+    ],
     areaText:
       "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
     backgroundColor: "#111a10",
@@ -512,12 +561,21 @@ const areas: AreasArray = [
       "Back to campfire",
       "Craft Stone Axe",
       "Craft Stone Pickaxe",
-      "",
+      "Craft Bed",
     ],
-    "button action": [handleGoHome, buyAxe, buyPickaxe],
+    "button action": [handleGoHome, buyAxe, buyPickaxe, buyBed],
     areaText: "You trudge over to your workbench",
-    backgroundColor: "#5e3718",
+    backgroundColor: "#261705",
     areaLogText: "You go to your crafting station",
+  },
+  {
+    name: "inventory",
+    imageSrc: "./src/images/campfire.jpeg",
+    "button text": ["Close", "", "", ""],
+    "button action": [handleGoHome],
+    areaText: "You open your inventory...",
+    backgroundColor: "#261705",
+    areaLogText: "You open your inventory..."
   },
 ];
 
