@@ -2,13 +2,19 @@
 
 #### AI images?
 
-<!-- GATHERING LOGS DELETES THE MESSAGES INCORRECTLY IF BOTH ARE PRESSED -> ADD CONDITION OF IF 4TH CHAR IS S OR W -->
+#### GATHERING LOGS DELETES THE MESSAGES INCORRECTLY IF BOTH ARE PRESSED -> ADD CONDITION OF IF 4TH CHAR IS S OR W (added invis space to wood so both are of the same length. hence deleting the same amount)
 
 #### Make objects, on button run obecjts with functions
 
 <!-- AFTER COMPLETING FEATURE ONE SORT SCSS EG VARIABLES -->
 
-<!-- Location images dont load accurately -->
+#### Location images dont load accurately
+
+<!-- 10% chance in travelling finding u a cave. Function thats always called, has variable randomised then if statement -->
+
+<!-- sheep chance 8, deer 4, wolf 3. Wolf chance to just take damage or kill and get wolfs blood. -->
+
+<!-- Fix wool antler chances -->
 
 # Order of Progress
 

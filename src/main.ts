@@ -2,20 +2,29 @@ import './style.scss'
 
 let axes: string[] = [];
 let pickaxes: string[] = [];
+let swords: string[] = [];
 let wood: string[] = [];
 let woodGained: number = 0;
 let stone: string [] = [];
 let stoneGained: number = 0;
+let meat: string [] = [];
+let meatGained: number = 0;
+let wool: string[] = [];
+let woolGained: number = 0;
+let antler: string[] = [];
+let antlerGained: number = 0;
 let deleteInterval: number;
 let energyLevel: number = 100;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 let currentBackgroundColor: string = "rgb(56, 34, 8)";
-let travelButtonPreviousFunction: (() => void) | null = null;
+let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
 let craftingButtonPreviousFunction: (() => void) | null = null;
 let sleepButtonPreviousFunction: (() => void) | null = null;
 let inventoryButtonPreviousFunction: (() => void) | null = null;
+
+
 
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
@@ -200,9 +209,6 @@ const handleGoTooWoods = () => {
   console.log("function called");
   
   handleChangingScreenContent(areas[2])
-  areas[1].imageSrc =
-    "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg";
-  areas[1].backgroundColor = "#111a10";
   logText.innerText = "You enter the still woods...";
   console.log("woods");
   
@@ -290,20 +296,20 @@ const handleGatherWood = () => {
 
   
   
-  logText.innerText += `+${woodGained} wood... \n`
+  logText.innerText += `+${woodGained} wood...${"\u200B"}\n`;
   
   for (let i: number = 0; i < woodGained; i++){
     wood.push("W");
   }
   woodGained = 0;
   woodAmount.innerText = `Wood: ${wood.length.toString()}`
-  if (logText.innerText.length > 55) {
+  if (logText.innerText.length > 60) {
     let splitLogText = logText.innerText.split("")
-    splitLogText.splice(0, 11)
+    splitLogText.splice(0, 12)
     logText.innerText = splitLogText.join("")
   }
   clearInterval(deleteInterval);
-  if (logText.innerText !== "You enter the still woods..." && logText.innerText.length >= 11 && logText.innerText !== "You walk around the baren woods...") {
+  if (logText.innerText !== "You enter the still woods..." && logText.innerText.length >= 12 && logText.innerText !== "You walk around the baren woods...") {
      deleteInterval = setInterval(deleteWoodText, 1000)
   }
 
@@ -375,10 +381,10 @@ const handleGatherStone = () => {
 
 const deleteWoodText = () => {
   let splitLogText = logText.innerText.split("");
-  splitLogText.splice(0, 11);
+  splitLogText.splice(0, 12);
   logText.innerText = splitLogText.join("");
   if (
-    logText.innerText.length < 11 ) {
+    logText.innerText.length < 12 ) {
     clearInterval(deleteInterval);
     logText.innerText = "You walk around the baren woods...";
   }  
@@ -394,8 +400,77 @@ const deleteStoneText = () => {
   }
 };
 
-if (wood.length >= 3 && stone.length >= 3) {
+const handleGoHunt = () => {
+  logText.innerText = ""
+  let animalChance = Math.floor(Math.random() * 15 - 1 + 1) + 1;
+  console.log(animalChance);
+  
+  if (swords.length === 0){
+    meatGained += Math.floor(Math.random() * (1 - 0 + 1)) + 0;
+    woolGained += Math.floor(Math.random() * (1 - 0 + 1)) + 0;
+    antlerGained += Math.floor(Math.random() * (1 - 0 + 1)) + 0;
+  } else if (swords.length === 1) {
+    meatGained += Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+    woolGained += Math.floor(Math.random() * (3 - 0 + 1)) + 0;
+    antlerGained += Math.floor(Math.random() * (2 - 0 + 1)) + 0;
+  }
 
+  if (animalChance > 8) {
+    let woolChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
+    if (woolChance > 5) {
+      if (meatGained === 0){
+        logText.innerText += `You failed to find something. \n`
+        woolGained = 0;
+      } else {
+        logText.innerText += `You found a sheep... +${meatGained} meat & +${woolGained} wool... \n`;
+        for (let i: number = 0; i < meatGained; i++) {
+          meat.push("S");
+        }
+        meatGained = 0;
+        for (let i: number = 0; i < woolGained; i++) {
+          wool.push("S");
+        }
+        woolGained = 0;
+        ;
+      }
+    }
+    else {
+      if (meatGained === 0){
+        logText.innerText += `You failed to find something. \n`;
+      } else {
+        meat.push("meat");
+        logText.innerText += `You found a sheep... +${meatGained} meat... \n`
+      }
+    }
+  } else if (animalChance > 4) {
+    let antlerChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
+    if (antlerChance > 7) {
+      if (meatGained === 0) {
+        logText.innerText += `You failed to find something. \n`;
+        antlerGained = 0;
+      } else {
+        logText.innerText += `You found a deer... +${meatGained} meat & +${antlerGained} antlers... \n`;
+        for (let i: number = 0; i < meatGained; i++) {
+          meat.push("S");
+        }
+        meatGained = 0;
+        for (let i: number = 0; i < antlerGained; i++) {
+          antler.push("S");
+        }
+        antlerGained = 0;
+      }
+    } else {
+      if (meatGained === 0) {
+        logText.innerText += `You failed to find something. \n`;
+      } else {
+        meat.push("meat");
+        logText.innerText += `You found a deer... +${meatGained} meat... \n`;
+      }
+    }
+  }
+
+  woolGained = 0;
+  antlerGained = 0;
   
 }
 
@@ -407,7 +482,7 @@ const areas: AreasArray = [
     "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption],
     areaText:
       "Alone in the woods, he sat by the fire's dwindling light, a silent witness to his world reduced to ash. With nothing left but memories, he found solace in the crackling flames, a flicker of hope amidst the desolation. In the stillness of the night, he pondered his next move, knowing that from the embers of loss, resilience would rise anew.",
-    backgroundColor: "rgb(56, 34, 8)",
+    backgroundColor: "#261705",
     areaLogText: "You have started your journey survivor.",
   },
   {
@@ -423,8 +498,8 @@ const areas: AreasArray = [
     name: "woods",
     imageSrc:
       "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg",
-    "button text": ["Gather Wood", "Gather Stone", "Travel", ""],
-    "button action": [handleGatherWood, handleGatherStone, handleGoToTravel],
+    "button text": ["Gather Wood", "Gather Stone", "Hunt", "Travel"],
+    "button action": [handleGatherWood, handleGatherStone, handleGoHunt, handleGoToTravel],
     areaText:
       "As you step into the woods, a chill runs down your spine, the canopy above casting the forest floor in a dim, dappled light. The ancient trees loom over you like silent sentinels, their gnarled branches reaching out as if to grasp at your very essence. The air is thick with the scent of damp earth and decaying leaves, and every rustle of movement sets your heart racing. You tread carefully, the path winding ahead, each twist and turn a potential new discovery or danger lurking in the shadows.",
     backgroundColor: "#111a10",
