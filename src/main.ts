@@ -14,12 +14,15 @@ let wool: string[] = [];
 let woolGained: number = 0;
 let antler: string[] = [];
 let antlerGained: number = 0;
+let wolfBlood: string[] = [];
+let wolfBloodGained: number = 0;
 let deleteInterval: number;
 let energyLevel: number = 100;
+let healthLevel: number = 100;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
-let currentBackgroundColor: string = "rgb(56, 34, 8)";
+
 let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
 let craftingButtonPreviousFunction: (() => void) | null = null;
 let sleepButtonPreviousFunction: (() => void) | null = null;
@@ -101,6 +104,11 @@ if (!buttonInventory) {
 const buttonAll = document.querySelectorAll<HTMLButtonElement>(".button")
 if (!buttonAll) {
   throw new Error("Error with Button All selector");
+}
+
+const healthAmount = document.querySelector<HTMLParagraphElement>(".health")
+if (!healthAmount) {
+  throw new Error("Error with Health Amount selector");
 }
 
 gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
@@ -293,7 +301,7 @@ const handleSleepOption = () => {
     energyLevel = 100;
     energyAmount.innerText = `Energy: ${energyLevel}`;
   }
-  
+  logText.innerText = "You rest..."
 }
 
 const handleOpenInventory = () => {
@@ -436,32 +444,35 @@ const handleGoHunt = () => {
   console.log(animalChance);
   
   if (swords.length === 0){
-    meatGained += Math.floor(Math.random() * (1 - 0 + 1))
-    woolGained += 1
-    antlerGained += 1
+    let meatGainedChance = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+    if (meatGainedChance > 3) {
+      meatGained += 1;
+    } else if (meatGainedChance > 0) {
+      meatGained += 0;
+    }
+    woolGained += 1;
+    antlerGained += 1;
+    wolfBloodGained += 1;
   } else if (swords.length === 1) {
-    meatGained += Math.floor(Math.random() * (3 - 0 + 1))
-    woolGained += Math.floor(Math.random() * (3 - 0 + 1))
-    antlerGained += Math.floor(Math.random() * (2 - 0 + 1))
+    meatGained += Math.floor(Math.random() * (3 - 0 + 1));
+    woolGained += Math.floor(Math.random() * (3 - 0 + 1));
+    antlerGained += Math.floor(Math.random() * (2 - 0 + 1));
+    wolfBloodGained += Math.floor(Math.random() * (2 - 0 + 1));
   }
 
-  if (animalChance > 8) {
+  if (animalChance > 7) {
     let woolChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
     if (woolChance > 5) {
       if (meatGained === 0){
         logText.innerText += `You failed to find something. \n`
-        woolGained = 0;
       } else {
         logText.innerText += `You found a sheep... +${meatGained} meat & +${woolGained} wool... \n`;
         for (let i: number = 0; i < meatGained; i++) {
           meat.push("meat");
         }
-        meatGained = 0;
         for (let i: number = 0; i < woolGained; i++) {
           wool.push("wool");
         }
-        woolGained = 0;
-        ;
         energyLevel -= 12;
         energyAmount.innerText = `Energy: ${energyLevel}`;
       }
@@ -474,27 +485,23 @@ const handleGoHunt = () => {
           meat.push("meat");
         }
         logText.innerText += `You found a sheep... +${meatGained} meat... \n`;
-        meatGained = 0;
         energyLevel -= 12;
         energyAmount.innerText = `Energy: ${energyLevel}`;
       }
     }
-  } else if (animalChance > 4) {
+  } else if (animalChance > 3) {
     let antlerChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
     if (antlerChance > 7) {
       if (meatGained === 0) {
         logText.innerText += `You failed to find something. \n`;
-        antlerGained = 0;
       } else {
         logText.innerText += `You found a deer... +${meatGained} meat & +${antlerGained} antlers... \n`;
         for (let i: number = 0; i < meatGained; i++) {
           meat.push("meat");
         }
-        meatGained = 0;
         for (let i: number = 0; i < antlerGained; i++) {
           antler.push("antler");
         }
-        antlerGained = 0;
         energyLevel -= 12;
         energyAmount.innerText = `Energy: ${energyLevel}`;
       }
@@ -506,7 +513,39 @@ const handleGoHunt = () => {
           meat.push("meat");
         }
         logText.innerText += `You found a deer... +${meatGained} meat... \n`;
-        meatGained = 0;
+        energyLevel -= 12;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
+      }
+    }
+  } else if (animalChance > 0) {
+    let wolfBloodChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
+    let damageTaken = Math.floor(Math.random() * 30 - 1 + 1) + 1;
+    if (wolfBloodChance > 3) {
+      if (meatGained === 0) {
+        logText.innerText += `You came across a snarling wolf... You barely manage to escape... You lost ${damageTaken} health... \n`;
+        healthLevel -= damageTaken
+        healthAmount.innerText = `Health: ${healthLevel}`
+      } else {
+        logText.innerText += `You came across a wolf and managed to defeat it... +${meatGained} meat & +${wolfBloodGained} wolfblood... \n`;
+        for (let i: number = 0; i < meatGained; i++) {
+          meat.push("meat");
+        }
+        for (let i: number = 0; i < wolfBloodGained; i++) {
+          wolfBlood.push("antler");
+        }
+        energyLevel -= 12;
+        energyAmount.innerText = `Energy: ${energyLevel}`
+      }
+    } else {
+      if (meatGained === 0) {
+        logText.innerText += `You came across a snarling wolf... You barely manage to escape... You lost ${damageTaken} health... \n`;
+        healthLevel -= damageTaken
+        healthAmount.innerText = `Health: ${healthLevel}`
+      } else {
+        logText.innerText += `You came across a wolf and managed to defeat it... +${meatGained} meat... \n`;
+        for (let i: number = 0; i < meatGained; i++) {
+          meat.push("meat");
+        }
         energyLevel -= 12;
         energyAmount.innerText = `Energy: ${energyLevel}`;
       }
@@ -515,6 +554,8 @@ const handleGoHunt = () => {
 
   woolGained = 0;
   antlerGained = 0;
+  meatGained = 0;
+  wolfBloodGained = 0;
   
 }
 
@@ -535,7 +576,7 @@ const areas: AreasArray = [
     "button text": ["Woods", "Home", "", ""],
     "button action": [handleGoTooWoods, handleGoHome],
     areaText: "The woods beckon",
-    backgroundColor: currentBackgroundColor,
+    backgroundColor: "null",
     areaLogText: "You have chosen to set out...",
   },
   {

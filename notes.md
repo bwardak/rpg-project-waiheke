@@ -14,7 +14,7 @@
 
 <!-- sheep chance 8, deer 4, wolf 3. Wolf chance to just take damage or kill and get wolfs blood. -->
 
-<!-- fix 2 meat bug by setting antlermeatgained and sheep different -->
+#### fix 2 meat bug by setting antlermeatgained and sheep different
 
 # Order of Progress
 
