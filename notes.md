@@ -69,7 +69,7 @@ Minigame to fight monsters.
 
 Can craft Sword, Axe, Torch, Bed. Cook food.
 
-Can hunt, gather wood, gather stone.
+#### Can hunt, gather wood, gather stone.
 
 Can make Cabin and move to it.
 
