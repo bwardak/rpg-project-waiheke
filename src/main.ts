@@ -2,7 +2,7 @@ import './style.scss'
 
 let axes: string[] = [];
 let pickaxes: string[] = [];
-let swords: string[] = [];
+let weapons: string[] = [];
 let bed: string[] = [];
 let wood: string[] = [];
 let woodGained: number = 0;
@@ -252,6 +252,7 @@ const handleGoHome = () => {
 }
 
 const handleGoToTravel = () => {
+  clearInterval(deleteInterval);
   console.log("called");
   // console.log(currentImageSrc);
   console.log(locationImage.src);
@@ -307,6 +308,12 @@ const handleCraftsShowing = () => {
 const handleCookingShowing = () => {
   if (wolfBlood.length >= 1 && water.length >= 5) {
     buttonCrafting.style.display = "initial"
+  }
+
+  if (meat.length >= 2) {
+    buttonInventory.style.display = "initial"
+    buttonSleep.style.display = "initial";
+    button5.style.display = "initial";
   }
 }
 
@@ -381,8 +388,7 @@ const handleStartOfGameScreen = () => {
 
 const handleGatherWater = () => {
   if (
-    logText.innerText === "You enter the still woods..." ||
-    logText.innerText === "You walk around the baren woods..." ||
+    logText.innerText.charAt(0) === "Y" ||
     logText.innerText.charAt(1) === "*"
   ) {
     logText.innerText = "";
@@ -420,13 +426,12 @@ const handleGatherWater = () => {
 const handleGatherWood = () => {
   console.log(logText.innerText);
   
-  if (
-    logText.innerText === "You enter the still woods..." ||
-    logText.innerText === "You walk around the baren woods..." ||
-    logText.innerText.charAt(1) === "*"
-  ) {
-    logText.innerText = "";
-  } 
+   if (
+     logText.innerText.charAt(0) === "Y" ||
+     logText.innerText.charAt(1) === "*"
+   ) {
+     logText.innerText = "";
+   } 
   if (axes.length === 0){
     woodGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
   } else if (axes.length === 1) {
@@ -476,13 +481,12 @@ const handleGatherWood = () => {
 }
 
 const handleGatherStone = () => {
-   if (
-     logText.innerText === "You enter the still woods..." ||
-     logText.innerText === "You walk around the baren woods..." ||
-     logText.innerText.charAt(1) === "*"
-   ) {
-     logText.innerText = "";
-   }
+    if (
+      logText.innerText.charAt(0) === "Y" ||
+      logText.innerText.charAt(1) === "*"
+    ) {
+      logText.innerText = "";
+    }
    if (pickaxes.length === 0) {
      stoneGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
    } else if (pickaxes.length === 1) {
@@ -549,7 +553,7 @@ const handleGoHunt = () => {
   let animalChance = Math.floor(Math.random() * 16 - 1 + 1) + 1;
   console.log(animalChance);
   
-  if (swords.length === 0){
+  if (weapons.length === 0){
     let meatGainedChance = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
     if (meatGainedChance > 3) {
       meatGained += 1;
@@ -559,7 +563,7 @@ const handleGoHunt = () => {
     woolGained += 1;
     antlerGained += 1;
     wolfBloodGained += 1;
-  } else if (swords.length === 1) {
+  } else if (weapons.length === 1) {
     meatGained += Math.floor(Math.random() * (3 - 0 + 1));
     woolGained += Math.floor(Math.random() * (3 - 0 + 1));
     antlerGained += Math.floor(Math.random() * (2 - 0 + 1));
@@ -685,7 +689,6 @@ const handleGoHunt = () => {
   antlerGained = 0;
   meatGained = 0;
   wolfBloodGained = 0;
-  
 }
 
 const areas: AreasArray = [
