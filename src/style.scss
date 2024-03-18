@@ -110,6 +110,10 @@ body {
   }
 }
 
+.button--6 {
+  display: none ;
+}
+
 .game-block__interactions-container__stats {
   display: grid;
   grid-template: repeat(5, 1fr) / 1fr 1fr;

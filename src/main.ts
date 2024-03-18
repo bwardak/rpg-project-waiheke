@@ -1,5 +1,6 @@
 import './style.scss'
 
+let homes: string[] = [];
 let axes: string[] = [];
 let pickaxes: string[] = [];
 let weapons: string[] = [];
@@ -18,6 +19,10 @@ let wolfBlood: string[] = [];
 let wolfBloodGained: number = 0;
 let water: string[] = [];
 let waterGained: number = 0;
+let healthPotion: string[] = [];
+let mutton: string[] = [];
+let deerStew: string[] = [];
+let wolfCurry: string[] = [];
 let deleteInterval: number;
 let energyLevel: number = 100;
 let healthLevel: number = 100;
@@ -26,6 +31,10 @@ let runAxePickaxeLogOnceStone: boolean = false;
 let runSwordLogOnceStone: boolean = false;
 let runHealingPotionLogOnce: boolean = false;
 let runMeatCookingLogOnce: boolean = false;
+let healthPotionAmount: string;
+let muttonAmount: string;
+let deerStewAmount: string;
+let wolfCurryAmount: string;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 
 let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
@@ -33,6 +42,7 @@ let craftingButtonPreviousFunction: (() => void) | null = null;
 let sleepButtonPreviousFunction: (() => void) | null = null;
 let inventoryButtonPreviousFunction: (() => void) | null = null;
 let cookingButtonPreviousFunction: (() => void) | null = null;
+let button6PreviousFunction: (() => void) | null = null;
 
 
 
@@ -55,6 +65,11 @@ if (!buttonCrafting) {
 const button5 = document.querySelector<HTMLButtonElement>(".button--5")
 if (!button5) {
   throw new Error("Error with Button 5 selector");
+}
+
+const button6 = document.querySelector<HTMLButtonElement>(".button--6")
+if (!button6) {
+  throw new Error("Error with Button 6 selector");
 }
 
 const gameContainer = document.querySelector<HTMLDivElement>(".game-container")
@@ -147,6 +162,8 @@ if (!waterAmount) {
   throw new Error("Error with Water Amount selector");
 }
 
+
+
 gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
 // buttonStartGame.style.display = "none"
 
@@ -234,6 +251,12 @@ const handleChangingScreenContent = (area: Areas) => {
   button5.addEventListener("click", area["button action"][4])
   cookingButtonPreviousFunction = area["button action"][4];
 
+   if (button6PreviousFunction) {
+     button6.removeEventListener("click", button6PreviousFunction);
+   }
+   button6.addEventListener("click", area["button action"][5]);
+   button6PreviousFunction = area["button action"][5];
+
   logText.innerText = area.areaLogText
 
   
@@ -248,6 +271,9 @@ const handleGoHome = () => {
   // areas[1].backgroundColor = "rgb(56, 34, 8)";
   buttonAll.forEach((button) => {
     button.style.display = "initial"
+    if (button.innerText === "") {
+      button.style.display = "none"
+    }
   })
 }
 
@@ -300,8 +326,12 @@ const handleCraftsShowing = () => {
     buttonInventory.style.display = "initial"
   }
 
-  if (wood.length >= 4 && antler.length >= 4) {
+  if (wood.length >= 4 && antler.length >= 2) {
     button5.style.display = "initial"
+  }
+
+  if (wood.length >= 100 && stone.length >= 100 && wool.length >= 15 && antler.length >= 15) {
+    button6.style.display = "initial"
   }
 }
 
@@ -320,12 +350,10 @@ const handleCookingShowing = () => {
 const buyAxe = () => {
   if(wood.length >= 3 && stone.length >= 3 && axes[0] !== "stone axe"){
     axes.push("stone axe");
-    console.log(wood, stone);
     wood.splice(0, 3)
     stone.splice(0, 3)
     woodAmount.innerText = `Wood: ${wood.length.toString()}`
     stoneAmount.innerText = `Stone: ${stone.length.toString()}`
-    console.log(wood, stone);
     logText.innerText = "You made a stone axe!";
   } else if(axes[0] === "stone axe") {
     logText.innerText = "You already own a stone axe!"
@@ -342,7 +370,7 @@ const buyPickaxe = () => {
     stoneAmount.innerText = `Stone: ${stone.length.toString()}`;
     console.log(wood, stone);
     logText.innerText = "You made a stone pickaxe!";
-  } else if (axes[0] === "stone axe") {
+  } else if (pickaxes[0] === "stone pickaxe") {
     logText.innerText = "You already own a stone pickaxe!";
   }
 };
@@ -353,11 +381,71 @@ const buyBed = () => {
     wood.splice(0, 10);
     wool.splice(0, 4);
     woodAmount.innerText = `Wood: ${wood.length.toString()}`;
-    // woolamount.innertext
+    woolAmount.innerText = `Wool: ${wool.length.toString()}`
     logText.innerText = "You made a bed!"
-  } else if (axes[0] === "bed") {
+  } else if (bed[0] === "bed") {
     logText.innerText = "You already own a bed!"
   }
+}
+
+const buySword = () => {
+  if (wood.length >= 4 && antler.length >= 2) {
+    weapons.push("sword") 
+    wood.splice(0, 4)
+    antler.splice(0, 2)
+    woodAmount.innerText = `Wood: ${wood.length.toString()}`;
+    antlerAmount.innerText = `Antlers: ${antler.length.toString()}`;
+    logText.innerText = "You made a sword!"
+  } else if (weapons[0] === "sword"){
+    logText.innerText = "You already own a sword!"
+  }
+}
+
+const buyCabin = () => {
+  if (wood.length >= 100 && stone.length >= 100 && wool.length >= 15 && antler.length >= 15){
+    homes.push("cabin")
+    wood.splice(0, 100)
+    stone.splice(0, 100);
+    wool.splice(0, 15);
+    antler.splice(0, 15);
+    woodAmount.innerText = `Wood: ${wood.length.toString()}`;
+    stoneAmount.innerText = `Stone: ${stone.length.toString()}`;
+    woolAmount.innerText = `Wool: ${wool.length.toString()}`;
+    antlerAmount.innerText = `Antlers: ${antler.length.toString()}`;
+    logText.innerText = `Home sweet home! You remade your beloved cabin!`
+  } else if (homes[0] === "cabin") {
+    logText.innerText = "You already own a cabin!";
+  }
+}
+
+const cookHealingPotion = () => {
+  healthPotion.push("potion");
+  wolfBlood.splice(0, 1);
+  water.splice(0, 5);
+  wolfBloodAmount.innerText = `Wolf Blood: ${wolfBlood.length.toString()}`
+  waterAmount.innerText = `Water: ${water.length.toString()}`;
+  logText.innerText = "You made a healing potion!"
+}
+
+const cookMutton = () => {
+  mutton.push("mutton");
+  meat.splice(0, 2)
+  meatAmount.innerText = `Meat: ${meat.length.toString()}`;
+  logText.innerText = "You cooked some mutton! Tastes bland..."
+}
+
+const cookDeerStew = () => {
+  deerStew.push("stew");
+  meat.splice(0, 2);
+  meatAmount.innerText = `Meat: ${meat.length.toString()}`;
+  logText.innerText = "You cooked some deer stew! Its a bit too thick...";
+}
+
+const cookWolfCurry = () => {
+  wolfCurry.push("curry");
+  meat.splice(0, 2);
+  meatAmount.innerText = `Meat: ${meat.length.toString()}`;
+  logText.innerText = "You cooked some wolf curry! Wait wtf ew...";
 }
 
 const handleSleepOption = () => {
@@ -378,7 +466,12 @@ const handleSleepOption = () => {
 
 const handleOpenInventory = () => {
   handleChangingScreenContent(areas[4])
+  buttonCrafting.innerText += ` (${healthPotion.length.toString()})`;
+  buttonSleep.innerText += ` (${mutton.length.toString()})`;
+  buttonInventory.innerText += ` (${deerStew.length.toString()})`;
+  button5.innerText += ` (${wolfCurry.length.toString()})`;
 }
+
 
 const handleStartOfGameScreen = () => {
   gameContainer.style.display = "initial"
@@ -695,7 +788,7 @@ const areas: AreasArray = [
   {
     name: "Home",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Travel", "Crafting", "Sleep", "Inventory", "Cooking"],
+    "button text": ["Travel", "Crafting", "Sleep", "Inventory", "Cooking", ""],
     "button action": [
       handleGoToTravel,
       handleCraftingMenu,
@@ -711,8 +804,8 @@ const areas: AreasArray = [
   {
     name: "travel",
     imageSrc: "./src/images/travel.jpeg",
-    "button text": ["Woods", "Home", "", "", ""],
-    "button action": [handleGoTooWoods, handleGoHome],
+    "button text": ["Home", "Woods", "", "", ""],
+    "button action": [handleGoHome, handleGoTooWoods],
     areaText: "The woods beckon",
     backgroundColor: "null",
     areaLogText: "You have chosen to set out...",
@@ -744,13 +837,14 @@ const areas: AreasArray = [
     name: "crafting",
     imageSrc: "./src/images/man-crafting.jpeg",
     "button text": [
-      "Back to campfire",
-      "Craft Stone Axe",
-      "Craft Stone Pickaxe",
-      "Craft Bed",
-      "Craft Sword",
+      "Go back",
+      "Stone Axe",
+      "Stone Pickaxe",
+      "Bed",
+      "Sword",
+      "Cabin"
     ],
-    "button action": [handleGoHome, buyAxe, buyPickaxe, buyBed],
+    "button action": [handleGoHome, buyAxe, buyPickaxe, buyBed, buySword, buyCabin],
     areaText: "You trudge over to your workbench",
     backgroundColor: "#261705",
     areaLogText: "You go to your crafting station",
@@ -758,7 +852,7 @@ const areas: AreasArray = [
   {
     name: "inventory",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Close", "", "", "", ""],
+    "button text": ["Close", `Health Pot`, `Mutton`, `Deer Stew `, `Wolf Curry `],
     "button action": [handleGoHome],
     areaText: "You open your inventory...",
     backgroundColor: "#261705",
@@ -767,8 +861,8 @@ const areas: AreasArray = [
   {
     name: "cooking",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Back to campfire", "Cook healing potion", "Cook Mutton", "Cook Deer Stew", "Cook Wolf Curry"],
-    "button action": [handleGoHome],
+    "button text": ["Go back", "Healing potion", "Mutton", "Deer Stew", "Wolf Curry"],
+    "button action": [handleGoHome, cookHealingPotion, cookMutton, cookDeerStew, cookWolfCurry],
     areaText: "You go to your stove...",
     backgroundColor: "#261705",
     areaLogText: "You go to your stove..."
