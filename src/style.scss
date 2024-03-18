@@ -64,14 +64,16 @@ body {
 
   .game-block__interactions-container__interactions {
     border: 2px solid #ae965e;
-    width: 520px;
+    width: 290px;
+
+    
 
     .button {
-      margin: 10px;
+      margin: 8px 10px 10px;
       min-width: 70px;
       max-width: 100px;
       min-height: 30px;
-      max-height: 70px;
+      max-height: 45px;
       display: inline-flex;
       justify-content: center;
       align-items: center;
@@ -84,6 +86,19 @@ body {
     }
   }
 
+  .game-block__interactions-container__interactions {
+    display: grid;
+    grid-template: 30px 150px / 1fr;
+
+    
+  }
+
+  .game-block__interactions-container__stats {
+    border: 2px solid #ae965e;
+    width: 230px;
+    height: 180px;
+  }
+
   .game-block__interactions-container__log {
     border: 2px solid #ae965e;
     width: 200px;
@@ -92,6 +107,49 @@ body {
     .log-text {
       margin-top: 5px;
     }
+  }
+}
+
+.game-block__interactions-container__stats {
+  display: grid;
+  grid-template: repeat(5, 1fr) / 1fr 1fr;
+  
+  p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .health {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .hunger {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+
+  .health {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .health {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .health {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .health {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .health {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  .health {
+    grid-area: 1 / 1 / 2 / 2;
   }
 }
 

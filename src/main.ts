@@ -16,18 +16,23 @@ let antler: string[] = [];
 let antlerGained: number = 0;
 let wolfBlood: string[] = [];
 let wolfBloodGained: number = 0;
+let water: string[] = [];
+let waterGained: number = 0;
 let deleteInterval: number;
 let energyLevel: number = 100;
 let healthLevel: number = 100;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
 let runSwordLogOnceStone: boolean = false;
+let runHealingPotionLogOnce: boolean = false;
+let runMeatCookingLogOnce: boolean = false;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 
 let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
 let craftingButtonPreviousFunction: (() => void) | null = null;
 let sleepButtonPreviousFunction: (() => void) | null = null;
 let inventoryButtonPreviousFunction: (() => void) | null = null;
+let cookingButtonPreviousFunction: (() => void) | null = null;
 
 
 
@@ -117,6 +122,31 @@ if (!healthAmount) {
   throw new Error("Error with Health Amount selector");
 }
 
+const meatAmount = document.querySelector<HTMLParagraphElement>(".meat")
+if (!meatAmount) {
+  throw new Error("Error with Meat Amount selector");
+}
+
+const woolAmount = document.querySelector<HTMLParagraphElement>(".wool");
+if (!woolAmount) {
+  throw new Error("Error with Wool Amount selector");
+}
+
+const antlerAmount = document.querySelector<HTMLParagraphElement>(".antler");
+if (!antlerAmount) {
+  throw new Error("Error with Antler Amount selector");
+}
+
+const wolfBloodAmount = document.querySelector<HTMLParagraphElement>(".wolfblood");
+if (!wolfBloodAmount) {
+  throw new Error("Error with Wolf Blood Amount selector");
+}
+
+const waterAmount = document.querySelector<HTMLParagraphElement>(".water")
+if (!waterAmount) {
+  throw new Error("Error with Water Amount selector");
+}
+
 gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
 // buttonStartGame.style.display = "none"
 
@@ -198,6 +228,12 @@ const handleChangingScreenContent = (area: Areas) => {
   buttonInventory.addEventListener("click", area["button action"][3]);
   inventoryButtonPreviousFunction = area["button action"][3];
 
+  if (cookingButtonPreviousFunction) {
+    button5.removeEventListener("click", cookingButtonPreviousFunction);
+  }
+  button5.addEventListener("click", area["button action"][4])
+  cookingButtonPreviousFunction = area["button action"][4];
+
   logText.innerText = area.areaLogText
 
   
@@ -244,7 +280,14 @@ const handleCraftingMenu = () => {
   handleCraftsShowing();
 }
 
-
+const handleCookingMenu = () => {
+  handleChangingScreenContent(areas[5]);
+  buttonAll.forEach((button) => {
+    button.style.display = "none"
+  })
+  buttonTravel.style.display = "initial";
+  handleCookingShowing()
+}
 
 const handleCraftsShowing = () => {
   if(wood.length >= 3 && stone.length >= 3){
@@ -258,6 +301,12 @@ const handleCraftsShowing = () => {
 
   if (wood.length >= 4 && antler.length >= 4) {
     button5.style.display = "initial"
+  }
+}
+
+const handleCookingShowing = () => {
+  if (wolfBlood.length >= 1 && water.length >= 5) {
+    buttonCrafting.style.display = "initial"
   }
 }
 
@@ -330,7 +379,43 @@ const handleStartOfGameScreen = () => {
   handleGoHome()
 }
 
+const handleGatherWater = () => {
+  if (
+    logText.innerText === "You enter the still woods..." ||
+    logText.innerText === "You walk around the baren woods..." ||
+    logText.innerText.charAt(1) === "*"
+  ) {
+    logText.innerText = "";
+  }
+  waterGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+  logText.innerText += `+${waterGained} water... \n`;
+  for (let i: number = 0; i < waterGained; i++) {
+    water.push("water");
+  }
+  waterGained = 0;
+  waterAmount.innerText = `Water: ${water.length.toString()}`
+  if (logText.innerText.length > 60) {
+    let splitLogText = logText.innerText.split("");
+    splitLogText.splice(0, 12);
+    logText.innerText = splitLogText.join("");
+  }
+  clearInterval(deleteInterval);
+  if (
+    logText.innerText !== "You enter the still woods..." &&
+    logText.innerText.length >= 12 &&
+    logText.innerText !== "You walk around the baren woods..."
+  ) {
+    deleteInterval = setInterval(deleteWoodText, 1000);
+  }
+  energyLevel -= 12;
+  energyAmount.innerText = `Energy: ${energyLevel}`;
 
+  if (water.length >= 5 && wolfBlood.length >= 1 && !runHealingPotionLogOnce) {
+    clearInterval(deleteInterval);
+    logText.innerText = `**YOU CAN NOW COOK HEALING POTIONS!** \n`;
+    runHealingPotionLogOnce = true;
+  }
+}
 
 const handleGatherWood = () => {
   console.log(logText.innerText);
@@ -459,6 +544,7 @@ const deleteStoneText = () => {
 };
 
 const handleGoHunt = () => {
+  clearInterval(deleteInterval);
   logText.innerText = ""
   let animalChance = Math.floor(Math.random() * 16 - 1 + 1) + 1;
   console.log(animalChance);
@@ -578,6 +664,23 @@ const handleGoHunt = () => {
     runSwordLogOnceStone = true;
   }
 
+  if (water.length >= 5 && wolfBlood.length >= 1 && !runHealingPotionLogOnce) {
+    clearInterval(deleteInterval);
+    logText.innerText = `**YOU CAN NOW COOK HEALING POTIONS!** \n`;
+    runHealingPotionLogOnce = true;
+  }
+
+  if (meat.length >= 2 && !runMeatCookingLogOnce) {
+    clearInterval(deleteInterval);
+    logText.innerText = `**YOU CAN NOW COOK MUTTON!** \n **YOU CAN NOW COOK DEER STEW!** \n **YOU CAN NOW COOK WOLF CURRY** \n`
+    runMeatCookingLogOnce = true;
+  }
+
+  meatAmount.innerText = `Meat: ${meat.length.toString()}`;
+  woolAmount.innerText = `Wool: ${wool.length.toString()}`;
+  antlerAmount.innerText = `Antler: ${antler.length.toString()}`;
+  wolfBloodAmount.innerText = `Wolf Blood: ${wolfBlood.length.toString()}`;
+
   woolGained = 0;
   antlerGained = 0;
   meatGained = 0;
@@ -590,7 +693,13 @@ const areas: AreasArray = [
     name: "Home",
     imageSrc: "./src/images/campfire.jpeg",
     "button text": ["Travel", "Crafting", "Sleep", "Inventory", "Cooking"],
-    "button action": [handleGoToTravel, handleCraftingMenu, handleSleepOption, handleOpenInventory],
+    "button action": [
+      handleGoToTravel,
+      handleCraftingMenu,
+      handleSleepOption,
+      handleOpenInventory,
+      handleCookingMenu
+    ],
     areaText:
       "Alone in the woods, he sat by the fire's dwindling light, a silent witness to his world reduced to ash. With nothing left but memories, he found solace in the crackling flames, a flicker of hope amidst the desolation. In the stillness of the night, he pondered his next move, knowing that from the embers of loss, resilience would rise anew.",
     backgroundColor: "#261705",
@@ -609,11 +718,18 @@ const areas: AreasArray = [
     name: "woods",
     imageSrc:
       "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg",
-    "button text": ["Gather Wood", "Gather Stone", "Hunt", "Travel", ""],
+    "button text": [
+      "Gather Wood",
+      "Gather Stone",
+      "Hunt",
+      "Get Water",
+      "Travel",
+    ],
     "button action": [
       handleGatherWood,
       handleGatherStone,
       handleGoHunt,
+      handleGatherWater,
       handleGoToTravel,
     ],
     areaText:
@@ -629,7 +745,7 @@ const areas: AreasArray = [
       "Craft Stone Axe",
       "Craft Stone Pickaxe",
       "Craft Bed",
-      "Craft Sword"
+      "Craft Sword",
     ],
     "button action": [handleGoHome, buyAxe, buyPickaxe, buyBed],
     areaText: "You trudge over to your workbench",
@@ -643,7 +759,16 @@ const areas: AreasArray = [
     "button action": [handleGoHome],
     areaText: "You open your inventory...",
     backgroundColor: "#261705",
-    areaLogText: "You open your inventory..."
+    areaLogText: "You open your inventory...",
+  },
+  {
+    name: "cooking",
+    imageSrc: "./src/images/campfire.jpeg",
+    "button text": ["Back to campfire", "Cook healing potion", "Cook Mutton", "Cook Deer Stew", "Cook Wolf Curry"],
+    "button action": [handleGoHome],
+    areaText: "You go to your stove...",
+    backgroundColor: "#261705",
+    areaLogText: "You go to your stove..."
   },
 ];
 

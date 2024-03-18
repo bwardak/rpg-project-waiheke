@@ -12,9 +12,13 @@
 
 <!-- 10% chance in travelling finding u a cave. Function thats always called, has variable randomised then if statement -->
 
-<!-- sheep chance 8, deer 4, wolf 3. Wolf chance to just take damage or kill and get wolfs blood. -->
+#### sheep chance 8, deer 4, wolf 3. Wolf chance to just take damage or kill and get wolfs blood.
 
 #### fix 2 meat bug by setting antlermeatgained and sheep different
+
+<!-- Just add potions, cooking and cabin build/stat changes. Add hearts bar while making grid layout -->
+
+<!-- Add extra texts and randomise them -->
 
 # Order of Progress
 
