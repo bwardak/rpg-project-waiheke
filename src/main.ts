@@ -26,15 +26,12 @@ let wolfCurry: string[] = [];
 let deleteInterval: number;
 let energyLevel: number = 100;
 let healthLevel: number = 100;
+let hungerLevel: number = 100;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
 let runSwordLogOnceStone: boolean = false;
 let runHealingPotionLogOnce: boolean = false;
 let runMeatCookingLogOnce: boolean = false;
-let healthPotionAmount: string;
-let muttonAmount: string;
-let deerStewAmount: string;
-let wolfCurryAmount: string;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 
 let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
@@ -137,6 +134,11 @@ if (!healthAmount) {
   throw new Error("Error with Health Amount selector");
 }
 
+const hungerAmount = document.querySelector<HTMLParagraphElement>(".hunger")
+if (!hungerAmount) {
+  throw new Error("Error with Hunger Amount selector");
+}
+
 const meatAmount = document.querySelector<HTMLParagraphElement>(".meat")
 if (!meatAmount) {
   throw new Error("Error with Meat Amount selector");
@@ -219,6 +221,12 @@ const handleChangingScreenContent = (area: Areas) => {
   button5.innerText = area["button text"][4];
   if (button5.innerText === "") {
     button5.style.display = "none";
+  }
+
+  button6.style.display = "initial";
+  button6.innerText = area["button text"][5];
+  if (button6.innerText === "") {
+    button6.style.display = "none";
   }
   
   if (travelButtonPreviousFunction) {
@@ -358,6 +366,7 @@ const buyAxe = () => {
   } else if(axes[0] === "stone axe") {
     logText.innerText = "You already own a stone axe!"
   }
+  handleCraftingMenu();
 }
 
 const buyPickaxe = () => {
@@ -373,6 +382,7 @@ const buyPickaxe = () => {
   } else if (pickaxes[0] === "stone pickaxe") {
     logText.innerText = "You already own a stone pickaxe!";
   }
+  handleCraftingMenu();
 };
 
 const buyBed = () => {
@@ -386,6 +396,7 @@ const buyBed = () => {
   } else if (bed[0] === "bed") {
     logText.innerText = "You already own a bed!"
   }
+  handleCraftingMenu();
 }
 
 const buySword = () => {
@@ -399,6 +410,7 @@ const buySword = () => {
   } else if (weapons[0] === "sword"){
     logText.innerText = "You already own a sword!"
   }
+  handleCraftingMenu();
 }
 
 const buyCabin = () => {
@@ -416,15 +428,21 @@ const buyCabin = () => {
   } else if (homes[0] === "cabin") {
     logText.innerText = "You already own a cabin!";
   }
+  handleCraftingMenu();
 }
 
 const cookHealingPotion = () => {
-  healthPotion.push("potion");
-  wolfBlood.splice(0, 1);
-  water.splice(0, 5);
-  wolfBloodAmount.innerText = `Wolf Blood: ${wolfBlood.length.toString()}`
-  waterAmount.innerText = `Water: ${water.length.toString()}`;
-  logText.innerText = "You made a healing potion!"
+  if (healthPotion.length < 5) {
+    healthPotion.push("potion");
+    wolfBlood.splice(0, 1);
+    water.splice(0, 5);
+    wolfBloodAmount.innerText = `Wolf Blood: ${wolfBlood.length.toString()}`;
+    waterAmount.innerText = `Water: ${water.length.toString()}`;
+    logText.innerText = "You made a healing potion!";
+  }else if(healthPotion.length >= 5){
+    logText.innerText = "You have the maximum amount of healing potions"
+  }
+  
 }
 
 const cookMutton = () => {
@@ -449,20 +467,38 @@ const cookWolfCurry = () => {
 }
 
 const handleSleepOption = () => {
-  if (bed[0] !== "bed") {
-    if (energyLevel < 50){
-      energyLevel += 50;
-      energyAmount.innerText = `Energy: ${energyLevel}`;
-    } else if (energyLevel > 50){
+  if (homes.length === 0) {
+    if (bed[0] !== "bed") {
+      if (energyLevel < 50) {
+        energyLevel += 50;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
+      } else if (energyLevel >= 50) {
+        energyLevel = 100;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
+      }
+    } else if (bed[0] === "bed") {
       energyLevel = 100;
       energyAmount.innerText = `Energy: ${energyLevel}`;
     }
-  } else if (bed[0] === "bed") {
-    energyLevel = 100;
-    energyAmount.innerText = `Energy: ${energyLevel}`;
+    logText.innerText = "You rest...";
+  } else if (homes.length === 1) {
+    if (bed[0] !== "bed") {
+      if (energyLevel < 100){
+        energyLevel += 50;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
+      } else if (energyLevel >= 100){
+        energyLevel = 150;
+        energyAmount.innerText = `Energy: ${energyLevel}`;
+      }
+    } else if (bed[0] === "bed") {
+      energyLevel = 150;
+      energyAmount.innerText = `Energy: ${energyLevel}`;
+    }
+    logText.innerText = "You rest..."
   }
-  logText.innerText = "You rest..."
 }
+  
+  
 
 const handleOpenInventory = () => {
   handleChangingScreenContent(areas[4])
@@ -472,6 +508,65 @@ const handleOpenInventory = () => {
   button5.innerText += ` (${wolfCurry.length.toString()})`;
 }
 
+const drinkHealthPotion = () => {
+  healthPotion.splice(0, 1)
+  buttonCrafting.innerText = `Health Pot (${healthPotion.length.toString()})`
+  if (homes.length === 0 && healthLevel === 100){
+    logText.innerText = `You already have maximum health!`
+  }else if (homes.length === 0 && healthLevel < 100) {
+    healthLevel = 100;
+    healthAmount.innerText = `Health: ${healthLevel}`
+    logText.innerText = `You drank a health potion...`;
+  } else if(homes.length === 1 && healthLevel === 150){
+    logText.innerText = `You already have maximum health!`
+  } else if (homes.length === 1 && healthLevel < 150) {
+    healthLevel = 150;
+    healthAmount.innerText = `Health: ${healthLevel}`
+    logText.innerText = `You drank a health potion...`;
+  }
+}
+
+const eatFood = () => {
+  if (homes.length === 0){
+    if (hungerLevel >= 80){
+      hungerLevel = 100
+      hungerAmount.innerText = `Hunger: ${hungerLevel}`;
+      logText.innerText = `You ate a meal... You feel full...`;
+    } else {
+      hungerLevel += 20;
+      hungerAmount.innerText = `Hunger: ${hungerLevel}`
+      logText.innerText = `You ate a meal... You feel full...`
+    }
+  } else if (homes.length === 1){
+    if (hungerLevel >= 130) {
+      hungerLevel = 150
+      hungerAmount.innerText = `Hunger: ${hungerLevel}`;
+      logText.innerText = `You ate a meal... You feel full...`;
+    } else {
+      hungerLevel += 20;
+      hungerAmount.innerText = `Hunger: ${hungerLevel}`
+      logText.innerText = `You ate a meal... You feel full...`;
+    }
+  }
+}
+
+const eatMutton = () => {
+  mutton.splice(0, 1)
+  buttonSleep.innerText = `Mutton (${mutton.length.toString()})`
+  eatFood()
+}
+
+const eatDeerStew = () => {
+  deerStew.splice(0, 1);
+  buttonInventory.innerText = `Deer Stew (${deerStew.length.toString()})`;
+  eatFood();
+};
+
+const eatWolfCurry = () => {
+  wolfCurry.splice(0, 1);
+  button5.innerText = `Wolf Curry (${wolfCurry.length.toString()})`;
+  eatFood();
+};
 
 const handleStartOfGameScreen = () => {
   gameContainer.style.display = "initial"
@@ -694,7 +789,7 @@ const handleGoHunt = () => {
     }
   } else if (animalChance >= 5) {
     let antlerChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
-    if (antlerChance > 7) {
+    if (antlerChance > 1) {
       if (meatGained === 0) {
         logText.innerText += `You failed to find something. \n`;
       } else {
@@ -804,7 +899,7 @@ const areas: AreasArray = [
   {
     name: "travel",
     imageSrc: "./src/images/travel.jpeg",
-    "button text": ["Home", "Woods", "", "", ""],
+    "button text": ["Home", "Woods", "", "", "", ""],
     "button action": [handleGoHome, handleGoTooWoods],
     areaText: "The woods beckon",
     backgroundColor: "null",
@@ -820,6 +915,7 @@ const areas: AreasArray = [
       "Hunt",
       "Get Water",
       "Travel",
+      ""
     ],
     "button action": [
       handleGatherWood,
@@ -852,8 +948,8 @@ const areas: AreasArray = [
   {
     name: "inventory",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Close", `Health Pot`, `Mutton`, `Deer Stew `, `Wolf Curry `],
-    "button action": [handleGoHome],
+    "button text": ["Close", `Health Pot`, `Mutton`, `Deer Stew `, `Wolf Curry `, ""],
+    "button action": [handleGoHome, drinkHealthPotion, eatMutton, eatDeerStew, eatWolfCurry],
     areaText: "You open your inventory...",
     backgroundColor: "#261705",
     areaLogText: "You open your inventory...",
@@ -861,7 +957,7 @@ const areas: AreasArray = [
   {
     name: "cooking",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Go back", "Healing potion", "Mutton", "Deer Stew", "Wolf Curry"],
+    "button text": ["Go back", "Healing potion", "Mutton", "Deer Stew", "Wolf Curry", ""],
     "button action": [handleGoHome, cookHealingPotion, cookMutton, cookDeerStew, cookWolfCurry],
     areaText: "You go to your stove...",
     backgroundColor: "#261705",

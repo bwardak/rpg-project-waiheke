@@ -16,9 +16,22 @@
 
 #### fix 2 meat bug by setting antlermeatgained and sheep different
 
-<!-- Just add potions, cooking and cabin build/stat changes. Add hearts bar while making grid layout -->
+#### Just add potions, cooking and cabin build/stat changes
 
 <!-- Add extra texts and randomise them -->
+
+#### 5 potion limit
+
+<!-- Hide inventory if dont have -->
+
+<!-- fix log of when u dont have meat but cook / eat-->
+
+#### Sort sleep function for if u have a cabin
+
+<!-- Encounter with wolf, runs function that goes to new area, ends with get loot button which takes u back to woods -->
+
+<!-- Fix where u have e.g 2 water 1 wolfblood but it still crafts as both are above 0 -->
+
 
 # Order of Progress
 
@@ -75,9 +88,7 @@ Can craft Sword, Axe, Torch, Bed. Cook food.
 
 #### Can hunt, gather wood, gather stone.
 
-Can make Cabin and move to it.
-
-Health Bar
+#### Can make Cabin and move to it.
 
 ## Feature 1
 
