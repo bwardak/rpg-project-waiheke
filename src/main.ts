@@ -9,6 +9,10 @@ let wood: string[] = [];
 let woodGained: number = 0;
 let stone: string [] = [];
 let stoneGained: number = 0;
+let iron: string[] = [];
+let ironGained: number = 0;
+let diamond: string[]= [];
+let diamondGained: number = 0;
 let meat: string [] = [];
 let meatGained: number = 0;
 let wool: string[] = [];
@@ -32,6 +36,7 @@ let runAxePickaxeLogOnceStone: boolean = false;
 let runSwordLogOnceStone: boolean = false;
 let runHealingPotionLogOnce: boolean = false;
 let runMeatCookingLogOnce: boolean = false;
+let showMinesInTravelMenu: boolean = false;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 
 let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
@@ -41,8 +46,16 @@ let inventoryButtonPreviousFunction: (() => void) | null = null;
 let cookingButtonPreviousFunction: (() => void) | null = null;
 let button6PreviousFunction: (() => void) | null = null;
 
+const statsContainer = document.querySelector<HTMLElement>(
+  ".game-block__interactions-container__stats"
+);if (!statsContainer) {
+  throw new Error("Error with Stats Container selector");
+}
 
-
+const hiddenParagraph = document.querySelectorAll<HTMLParagraphElement>("#hide")
+if (!hiddenParagraph) {
+  throw new Error("Error with Hidden Paragraph selector");
+}
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
   throw new Error("Error with Starting Game button selector");
@@ -286,6 +299,7 @@ const handleGoHome = () => {
 }
 
 const handleGoToTravel = () => {
+  buttonSleep.style.display = "initial"
   clearInterval(deleteInterval);
   console.log("called");
   // console.log(currentImageSrc);
@@ -295,15 +309,55 @@ const handleGoToTravel = () => {
   
   
   handleChangingScreenContent(areas[1])
+  handleChanceOfFindingCaves()
+}
+
+const handleChanceOfFindingCaves = () => {
+  if (buttonSleep.innerText === "Cave" && !showMinesInTravelMenu) {
+    buttonSleep.style.display = "none"
+  }
+  let chanceOfCaves = Math.floor(Math.random() * 10 - 1 + 1) + 1;
+  if (chanceOfCaves > 2 && !showMinesInTravelMenu) {
+    buttonSleep.style.display = "initial"
+    showMinesInTravelMenu = true;
+    logText.innerText = `**YOU HAVE DISCOVERED A CAVE!**`
+  }
+}
+
+const handleGoToCave = () => {
+  handleChangingScreenContent(areas[6])
+}
+
+const handleMine = () => {
+  if (pickaxes.length === 0) {
+    logText.innerText = `Mining without a pickaxe doesnt seem like a good idea...`
+  }
+
+  if(pickaxes.length === 1){
+    stoneGained += Math.floor(Math.random() * (5 - 2 + 1)) + 2;
+    ironGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+    let ironChance = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+    if (ironChance > 5) {
+      for (let i: number = 0; i < stoneGained; i++) {
+        stone.push("S");
+      }
+      for (let i: number = 0; i < ironGained; i++) {
+        iron.push("I");
+      }
+      logText.innerText
+      stoneGained = 0;
+      ironGained = 0;
+    }
+  }
+  // statsContainer.style.gridTemplate = "repeat(6, 1fr) / 1fr 1fr";
+  // hiddenParagraph.forEach((paragraph) => {
+  //   paragraph.style.display = "flex"
+  // })
 }
 
 const handleGoTooWoods = () => {
-  console.log("function called");
-  
   handleChangingScreenContent(areas[2])
   logText.innerText = "You enter the still woods...";
-  console.log("woods");
-  
 }
 
 const handleCraftingMenu = () => {
@@ -789,7 +843,7 @@ const handleGoHunt = () => {
     }
   } else if (animalChance >= 5) {
     let antlerChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
-    if (antlerChance > 1) {
+    if (antlerChance > 5) {
       if (meatGained === 0) {
         logText.innerText += `You failed to find something. \n`;
       } else {
@@ -889,7 +943,7 @@ const areas: AreasArray = [
       handleCraftingMenu,
       handleSleepOption,
       handleOpenInventory,
-      handleCookingMenu
+      handleCookingMenu,
     ],
     areaText:
       "Alone in the woods, he sat by the fire's dwindling light, a silent witness to his world reduced to ash. With nothing left but memories, he found solace in the crackling flames, a flicker of hope amidst the desolation. In the stillness of the night, he pondered his next move, knowing that from the embers of loss, resilience would rise anew.",
@@ -899,8 +953,8 @@ const areas: AreasArray = [
   {
     name: "travel",
     imageSrc: "./src/images/travel.jpeg",
-    "button text": ["Home", "Woods", "", "", "", ""],
-    "button action": [handleGoHome, handleGoTooWoods],
+    "button text": ["Home", "Woods", "Cave", "", "", ""],
+    "button action": [handleGoHome, handleGoTooWoods, handleGoToCave],
     areaText: "The woods beckon",
     backgroundColor: "null",
     areaLogText: "You have chosen to set out...",
@@ -915,7 +969,7 @@ const areas: AreasArray = [
       "Hunt",
       "Get Water",
       "Travel",
-      ""
+      "",
     ],
     "button action": [
       handleGatherWood,
@@ -938,9 +992,16 @@ const areas: AreasArray = [
       "Stone Pickaxe",
       "Bed",
       "Sword",
-      "Cabin"
+      "Cabin",
     ],
-    "button action": [handleGoHome, buyAxe, buyPickaxe, buyBed, buySword, buyCabin],
+    "button action": [
+      handleGoHome,
+      buyAxe,
+      buyPickaxe,
+      buyBed,
+      buySword,
+      buyCabin,
+    ],
     areaText: "You trudge over to your workbench",
     backgroundColor: "#261705",
     areaLogText: "You go to your crafting station",
@@ -948,8 +1009,21 @@ const areas: AreasArray = [
   {
     name: "inventory",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Close", `Health Pot`, `Mutton`, `Deer Stew `, `Wolf Curry `, ""],
-    "button action": [handleGoHome, drinkHealthPotion, eatMutton, eatDeerStew, eatWolfCurry],
+    "button text": [
+      "Close",
+      `Health Pot`,
+      `Mutton`,
+      `Deer Stew `,
+      `Wolf Curry `,
+      "",
+    ],
+    "button action": [
+      handleGoHome,
+      drinkHealthPotion,
+      eatMutton,
+      eatDeerStew,
+      eatWolfCurry,
+    ],
     areaText: "You open your inventory...",
     backgroundColor: "#261705",
     areaLogText: "You open your inventory...",
@@ -957,11 +1031,33 @@ const areas: AreasArray = [
   {
     name: "cooking",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Go back", "Healing potion", "Mutton", "Deer Stew", "Wolf Curry", ""],
-    "button action": [handleGoHome, cookHealingPotion, cookMutton, cookDeerStew, cookWolfCurry],
+    "button text": [
+      "Go back",
+      "Healing potion",
+      "Mutton",
+      "Deer Stew",
+      "Wolf Curry",
+      "",
+    ],
+    "button action": [
+      handleGoHome,
+      cookHealingPotion,
+      cookMutton,
+      cookDeerStew,
+      cookWolfCurry,
+    ],
     areaText: "You go to your stove...",
     backgroundColor: "#261705",
-    areaLogText: "You go to your stove..."
+    areaLogText: "You go to your stove...",
+  },
+  {
+    name: "mines",
+    imageSrc: "./src/images/campfire.jpeg",
+    "button text": ["Go back", "Mine", "", "", "", ""],
+    "button action": [handleGoToTravel, handleMine],
+    areaText: "You enter the caves...",
+    backgroundColor: "#261705",
+    areaLogText: "You enter the caves..."
   },
 ];
 
