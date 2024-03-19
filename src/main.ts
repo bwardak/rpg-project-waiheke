@@ -41,6 +41,8 @@ let runSwordLogOnceStone: boolean = false;
 let runHealingPotionLogOnce: boolean = false;
 let runMeatCookingLogOnce: boolean = false;
 let showMinesInTravelMenu: boolean = false;
+let wolfDead: boolean = false;
+let wolfEncounterInterval: number;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 
 let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
@@ -413,6 +415,7 @@ const handleIfIronOrCoalGained = () => {
 const handleGoTooWoods = () => {
   handleChangingScreenContent(areas[2])
   logText.innerText = "You enter the still woods...";
+  wolfDead = false
 }
 
 const handleCraftingMenu = () => {
@@ -845,7 +848,11 @@ const deleteStoneText = () => {
 };
 
 const handleWolfEncounter = () => {
-    handleChangingScreenContent(areas[7])
+  clearInterval(wolfEncounterInterval)
+  clearInterval(deleteInterval)
+    wolfHealth = 100;
+    wolfDead = false;
+    handleChangingScreenContent(areas[7])   
 }
 
 const handleWolfAttack = () => {
@@ -854,6 +861,11 @@ const handleWolfAttack = () => {
   healthAmount.innerText = `Health: ${healthLevel}`
   logText.innerText += `The wolf attacks and deals ${wolfDamageAmount}... Ouch... \n`
   wolfDamage = 3;
+
+  if (healthLevel <= 0) {
+    wolfDead = true;
+    loseFight();
+  }
 }
 
 const winFight = () => {
@@ -862,6 +874,8 @@ const winFight = () => {
   wolfBlood.push("blood");
   meatAmount.innerText = `Meat: ${meat.length.toString()}`
   wolfBloodAmount.innerText = `Meat: ${wolfBlood.length.toString()}`;
+  wolfDead = true
+  wolfEncounterInterval = setInterval(() => {wolfDead = false; handleGoTooWoods();}, 2000)
 }
 
 const loseFight = () => {
@@ -899,6 +913,7 @@ const handleGameRestart = () => {
   energyLevel = 100;
   healthLevel = 100;
   hungerLevel = 100;
+  wolfHealth = 100;
   healthAmount.innerText = "Health: 100";
   hungerAmount.innerText = "Hunger: 100";
   energyAmount.innerText = "Energy: 100";
@@ -911,6 +926,13 @@ const handleGameRestart = () => {
   wolfBloodAmount.innerText = "Wolf Blood: 0";
   ironAmount.innerText = "Iron: 0";
   diamondAmount.innerText = "Coal: 0";
+  runAxePickaxeLogOnceWood = false;
+  runAxePickaxeLogOnceStone  = false;
+  runSwordLogOnceStone = false;
+  runHealingPotionLogOnce = false;
+  runMeatCookingLogOnce = false;
+  showMinesInTravelMenu = false;
+  wolfDead = false;
   handleGoHome()
 }
 
@@ -927,18 +949,21 @@ const handleAttack = () => {
     damageAmount = swordDamage * (Math.floor(Math.random() * 6 - 1 + 1) + 1);
     wolfHealth -= damageAmount;
   }
+  if (wolfHealth <= 0) {
+    winFight()
+  } 
   narrativeText.innerText = `You encounter a wolf! \n Health: ${wolfHealth}`;
+  if (wolfDead) {
+    return null
+  }
   logText.innerText += `You attack the wolf and deal ${damageAmount} damage! \n \n`
+  
   setTimeout(handleWolfAttack, 1000);
 
   fistDamage = 5;
   swordDamage = 7;
 
-  if (wolfHealth <= 0) {
-    winFight()
-  } else if (healthLevel <= 0) {
-    loseFight()
-  }
+  
 }
 
 const handleBlock = () => {
