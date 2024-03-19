@@ -52,10 +52,17 @@ const statsContainer = document.querySelector<HTMLElement>(
   throw new Error("Error with Stats Container selector");
 }
 
-const hiddenParagraph = document.querySelectorAll<HTMLParagraphElement>("#hide")
-if (!hiddenParagraph) {
-  throw new Error("Error with Hidden Paragraph selector");
+const hiddenParagraphIron = document.querySelector<HTMLParagraphElement>("#hide-iron")
+if (!hiddenParagraphIron) {
+  throw new Error("Error with Hidden Paragraph Iron selector");
 }
+
+const hiddenParagraphCoal =
+  document.querySelector<HTMLParagraphElement>("#hide-coal");
+if (!hiddenParagraphCoal) {
+  throw new Error("Error with Hidden Paragraph Coal selector");
+}
+
 const buttonStartGame = document.querySelector<HTMLButtonElement>(".start-game")
 if (!buttonStartGame) {
   throw new Error("Error with Starting Game button selector");
@@ -177,7 +184,15 @@ if (!waterAmount) {
   throw new Error("Error with Water Amount selector");
 }
 
+const ironAmount = document.querySelector<HTMLParagraphElement>(".iron");
+if (!ironAmount) {
+  throw new Error("Error with Iron Amount selector");
+}
 
+const diamondAmount = document.querySelector<HTMLParagraphElement>(".diamond");
+if (!diamondAmount) {
+  throw new Error("Error with Diamond Amount selector");
+}
 
 gameContainer.style.display = "none"   // Uncomment this in the end and remove the line below
 // buttonStartGame.style.display = "none"
@@ -336,7 +351,9 @@ const handleMine = () => {
   if(pickaxes.length === 1){
     stoneGained += Math.floor(Math.random() * (5 - 2 + 1)) + 2;
     ironGained += Math.floor(Math.random() * (2 - 1 + 1)) + 1;
+    diamondGained += 1
     let ironChance = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
+    let coalChance = Math.floor(Math.random() * (10 - 1 + 1)) + 1;
     if (ironChance > 5) {
       for (let i: number = 0; i < stoneGained; i++) {
         stone.push("S");
@@ -344,15 +361,49 @@ const handleMine = () => {
       for (let i: number = 0; i < ironGained; i++) {
         iron.push("I");
       }
-      logText.innerText
+      logText.innerText = `Jackpot! \n+${stoneGained} stone... \n +${ironGained} iron... \n`
       stoneGained = 0;
       ironGained = 0;
+      stoneAmount.innerText = `Stone: ${stone.length.toString()}`
+      ironAmount.innerText = `Iron: ${iron.length.toString()}`;
+    } else if (ironChance <= 5) {
+      ironGained = 0;
+      for (let i: number = 0; i < stoneGained; i++) {
+        stone.push("S");
+      }
+      logText.innerText = `Just useless rocks... \n+${stoneGained} stone... \n`
+      stoneGained = 0;
+      stoneAmount.innerText = `Stone: ${stone.length.toString()}`;
+    }
+
+    if(coalChance > 5){
+      for (let i: number = 0; i < diamondGained; i++) {
+        diamond.push("C");
+      }
+      logText.innerText += `+1 coal... \n`
+      diamondGained = 0;
+      diamondAmount.innerText = `Coal: ${diamond.length.toString()}`
     }
   }
+  handleIfIronOrCoalGained()
   // statsContainer.style.gridTemplate = "repeat(6, 1fr) / 1fr 1fr";
   // hiddenParagraph.forEach((paragraph) => {
   //   paragraph.style.display = "flex"
   // })
+}
+
+const handleIfIronOrCoalGained = () => {
+  if (iron.length === 1 || diamond.length === 1){
+    statsContainer.style.gridTemplate = "repeat(6, 1fr) / 1fr 1fr";
+  }
+
+  if (iron.length === 1) {
+    hiddenParagraphIron.style.display = "flex"
+  }
+
+  if (diamond.length === 1) {
+    hiddenParagraphCoal.style.display = "flex";
+  }
 }
 
 const handleGoTooWoods = () => {
