@@ -31,6 +31,10 @@ let deleteInterval: number;
 let energyLevel: number = 100;
 let healthLevel: number = 100;
 let hungerLevel: number = 100;
+let wolfHealth: number = 100;
+let fistDamage: number = 5;
+let swordDamage: number = 7;
+let wolfDamage: number = 3;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
 let runSwordLogOnceStone: boolean = false;
@@ -840,6 +844,72 @@ const deleteStoneText = () => {
   }
 };
 
+const handleWolfEncounter = () => {
+    handleChangingScreenContent(areas[7])
+}
+
+const handleWolfAttack = () => {
+  let wolfDamageAmount = wolfDamage * (Math.floor(Math.random() * 11 - 1 + 1) + 1);
+  healthLevel -= wolfDamageAmount
+  healthAmount.innerText = `Health: ${healthLevel}`
+  logText.innerText += `The wolf attacks and deals ${wolfDamageAmount}... Ouch... \n`
+  wolfDamage = 3;
+}
+
+const handleAttack = () => {
+  logText.innerText = "";
+  if (fistDamage === 10 || fistDamage === 7.5 || swordDamage === 14 || swordDamage === 10.5) {
+    logText.innerText = `**COUNTER ATTACK** \n \n`;
+  }
+  let damageAmount;
+  if (weapons.length === 0) {
+    damageAmount = fistDamage * (Math.floor(Math.random() * 6 - 1 + 1) + 1);
+    wolfHealth -= damageAmount;
+  } else if (weapons.length === 1){
+    damageAmount = swordDamage * (Math.floor(Math.random() * 6 - 1 + 1) + 1);
+    wolfHealth -= damageAmount;
+  }
+  narrativeText.innerText = `You encounter a wolf! \n Health: ${wolfHealth}`;
+  logText.innerText += `You attack the wolf and deal ${damageAmount} damage! \n \n`
+  setTimeout(handleWolfAttack, 1000);
+
+  fistDamage = 5;
+  swordDamage = 7;
+}
+
+const handleBlock = () => {
+  logText.innerText = `You stance to block the next attack! \n \n`
+  wolfDamage = 1;
+
+  let chanceForDoubleDamage = Math.floor(Math.random() * 15 - 1 + 1) + 1;
+  if (chanceForDoubleDamage > 10) {
+    fistDamage = 10;
+    swordDamage = 14
+  }
+  setTimeout(handleWolfAttack, 1000);
+}
+
+const handleDodge = () => {
+  logText.innerText = ``
+  let chanceForDodge = Math.floor(Math.random() * 10 - 1 + 1) + 1;
+  if (chanceForDodge > 5) {
+    setTimeout(() => {logText.innerText = "You dodged the attack"}, 1000)
+    fistDamage = 7.5;
+    swordDamage = 10.5;
+  } else {
+    setTimeout(() => {logText.innerText = "You failed to dodge the attack \n \n"}, 1000);
+    wolfDamage = 2
+    setTimeout(handleWolfAttack, 2000)
+  }
+}
+
+const handleFlee = () => {
+  logText.innerText = `You manage to flee, only losing 10 health...`
+  healthLevel -= 10;
+  healthAmount.innerText = `Health: ${healthLevel}`
+  setTimeout(handleGoTooWoods, 2000)
+}
+
 const handleGoHunt = () => {
   clearInterval(deleteInterval);
   logText.innerText = ""
@@ -921,6 +991,7 @@ const handleGoHunt = () => {
       }
     }
   } else if (animalChance >= 1) {
+    handleWolfEncounter()
     let wolfBloodChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
     let damageTaken = Math.floor(Math.random() * 30 - 10 + 1) + 10;
     if (wolfBloodChance > 3) {
@@ -955,6 +1026,8 @@ const handleGoHunt = () => {
     }
   }
 
+  
+
   if (wood.length >= 4 && antler.length >= 2 && !runSwordLogOnceStone) {
     clearInterval(deleteInterval);
     logText.innerText = `**YOU CAN NOW CRAFT A BASIC SWORD!** \n`;
@@ -983,6 +1056,9 @@ const handleGoHunt = () => {
   meatGained = 0;
   wolfBloodGained = 0;
 }
+
+
+
 
 const areas: AreasArray = [
   {
@@ -1108,7 +1184,16 @@ const areas: AreasArray = [
     "button action": [handleGoToTravel, handleMine],
     areaText: "You enter the caves...",
     backgroundColor: "#261705",
-    areaLogText: "You enter the caves..."
+    areaLogText: "You enter the caves...",
+  },
+  {
+    name: "wolf",
+    imageSrc: "./src/images/wolf.jpeg",
+    "button text": ["Attack", "Block", "Dodge", "Flee", "", ""],
+    "button action": [handleAttack, handleBlock, handleDodge, handleFlee],
+    areaText: `You encounter a wolf! \n \n Health: ${wolfHealth}`,
+    backgroundColor: "#3c3d3d",
+    areaLogText: "You run into a wolf...",
   },
 ];
 

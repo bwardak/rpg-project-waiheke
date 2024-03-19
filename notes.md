@@ -92,7 +92,7 @@ Can craft Sword, Axe, Torch, Bed. Cook food.
 
 ## Feature 1
 
-Cave/Mining.
+#### Cave/Mining.
 
 Can make stronger tools.
 
