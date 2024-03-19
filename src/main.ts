@@ -856,6 +856,64 @@ const handleWolfAttack = () => {
   wolfDamage = 3;
 }
 
+const winFight = () => {
+  logText.innerText = `**YOU DEFEAT THE WOLF!** \n \n+2 meat... \n+1 Wolf Blood... `;
+  meat.push("meat", "meat");
+  wolfBlood.push("blood");
+  meatAmount.innerText = `Meat: ${meat.length.toString()}`
+  wolfBloodAmount.innerText = `Meat: ${wolfBlood.length.toString()}`;
+}
+
+const loseFight = () => {
+  handleChangingScreenContent(areas[8])
+}
+
+const handleGameRestart = () => {
+  homes = [];
+  axes = [];
+  pickaxes = [];
+  weapons = [];
+  bed = [];
+  wood = [];
+  woodGained = 0;
+  stone = [];
+  stoneGained = 0;
+  iron = [];
+  ironGained = 0;
+  diamond = [];
+  diamondGained = 0;
+  meat = [];
+  meatGained = 0;
+  wool = [];
+  woolGained = 0;
+  antler = [];
+  antlerGained = 0;
+  wolfBlood = [];
+  wolfBloodGained = 0;
+  water = [];
+  waterGained = 0;
+  healthPotion = [];
+  mutton = [];
+  deerStew = [];
+  wolfCurry = [];
+  energyLevel = 100;
+  healthLevel = 100;
+  hungerLevel = 100;
+  healthAmount.innerText = "Health: 100";
+  hungerAmount.innerText = "Hunger: 100";
+  energyAmount.innerText = "Energy: 100";
+  woodAmount.innerText = "Wood: 0";
+  stoneAmount.innerText = "Stone: 0";
+  meatAmount.innerText = "Meat: 0";
+  woolAmount.innerText = "Wool: 0";
+  waterAmount.innerText = "Water: 0";
+  antlerAmount.innerText = "Antler: 0";
+  wolfBloodAmount.innerText = "Wolf Blood: 0";
+  ironAmount.innerText = "Iron: 0";
+  diamondAmount.innerText = "Coal: 0";
+  handleGoHome()
+}
+
 const handleAttack = () => {
   logText.innerText = "";
   if (fistDamage === 10 || fistDamage === 7.5 || swordDamage === 14 || swordDamage === 10.5) {
@@ -875,6 +933,12 @@ const handleAttack = () => {
 
   fistDamage = 5;
   swordDamage = 7;
+
+  if (wolfHealth <= 0) {
+    winFight()
+  } else if (healthLevel <= 0) {
+    loseFight()
+  }
 }
 
 const handleBlock = () => {
@@ -1194,6 +1258,15 @@ const areas: AreasArray = [
     areaText: `You encounter a wolf! \n \n Health: ${wolfHealth}`,
     backgroundColor: "#3c3d3d",
     areaLogText: "You run into a wolf...",
+  },
+  {
+    name: "restart",
+    imageSrc: "./src/images/wolf.jpeg",
+    "button text": ["Restart", "", "", "", "", ""],
+    "button action": [handleGameRestart],
+    areaText: `You have died... rest in peace...`,
+    backgroundColor: "#3c3d3d",
+    areaLogText: "Rest in piece..."
   },
 ];
 
