@@ -1,15 +1,15 @@
 import './style.scss'
 
-let homes: string[] = [];
-let axes: string[] = [];
-let pickaxes: string[] = [];
-let weapons: string[] = [];
-let bed: string[] = [];
+let homes: string[] = ["w"];
+let axes: string[] = ["w"];
+let pickaxes: string[] = ["w"];
+let weapons: string[] = ["w"];
+let bed: string[] = ["w"];
 let wood: string[] = [];
 let woodGained: number = 0;
 let stone: string [] = [];
 let stoneGained: number = 0;
-let iron: string[] = [];
+let iron: string[] = ["w", "w", "w", "w", "w"];
 let ironGained: number = 0;
 let diamond: string[]= [];
 let diamondGained: number = 0;
@@ -23,7 +23,7 @@ let wolfBlood: string[] = [];
 let wolfBloodGained: number = 0;
 let water: string[] = [];
 let waterGained: number = 0;
-let healthPotion: string[] = [];
+let healthPotion: string[] = ["w"];
 let mutton: string[] = [];
 let deerStew: string[] = [];
 let wolfCurry: string[] = [];
@@ -32,17 +32,22 @@ let energyLevel: number = 100;
 let healthLevel: number = 100;
 let hungerLevel: number = 100;
 let wolfHealth: number = 100;
+let monsterHealth: number = 200;
 let fistDamage: number = 5;
 let swordDamage: number = 7;
 let wolfDamage: number = 3;
+let monsterDamage: number = 5;
 let runAxePickaxeLogOnceWood: boolean = false;
 let runAxePickaxeLogOnceStone: boolean = false;
 let runSwordLogOnceStone: boolean = false;
 let runHealingPotionLogOnce: boolean = false;
 let runMeatCookingLogOnce: boolean = false;
 let showMinesInTravelMenu: boolean = false;
+let showBossFight: boolean = false;
 let wolfDead: boolean = false;
+let monsterDead: boolean = false;
 let wolfEncounterInterval: number;
+let textTimeout: number;
 // let currentImageSrc: string = "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg"
 
 let travelButtonPreviousFunction: (() => void) | null = null;                 // Removes event listener
@@ -220,10 +225,14 @@ type AreasArray = Areas[];
 
   
 const handleChangingScreenContent = (area: Areas) => {
+  clearInterval(wolfEncounterInterval);
+  clearInterval(deleteInterval);
+  clearInterval(textTimeout);
   locationImage.src = area.imageSrc
   // currentImageSrc = locationImage.src
 
-  narrativeText.innerText = area.areaText
+  // narrativeText.innerText = area.areaText
+  textTypewriting(narrativeText, area.areaText)
   
   backgroundColor.style.backgroundColor = area.backgroundColor
 
@@ -308,15 +317,27 @@ const handleChangingScreenContent = (area: Areas) => {
 
 const handleGoHome = () => {
   handleChangingScreenContent(areas[0])
-  // areas[1].imageSrc =
-  //   "https://storage.googleapis.com/pai-images/fb8618776e8645a5bb6dae2e1cc00e1b.jpeg";
-  // areas[1].backgroundColor = "rgb(56, 34, 8)";
   buttonAll.forEach((button) => {
     button.style.display = "initial"
     if (button.innerText === "") {
       button.style.display = "none"
     }
   })
+  handleBossEncounter();
+  if (!showBossFight) {
+    button6.style.display = "none"
+  } else if (showBossFight) {
+    button6.style.display = "inline-flex"
+  }
+  if (homes.length === 1) {
+    locationImage.src = "./src/images/cabin.jpeg"
+    clearInterval(textTimeout);
+    narrativeText.innerText = ""
+    textTypewriting(
+      narrativeText,
+      "In the comforting embrace of his secluded cabin, he settled by the fading fire's glow, surrounded by the remnants of a world now reduced to ashes. Amidst the quiet solitude, he sought solace in the crackling flames, finding a glimmer of hope amidst the desolation. As the night grew still, he contemplated his next steps, acknowledging that from the ashes of loss, resilience would eventually emerge."
+    );
+  }
 }
 
 const handleGoToTravel = () => {
@@ -544,15 +565,15 @@ const buyCabin = () => {
 }
 
 const cookHealingPotion = () => {
-  if (healthPotion.length < 5) {
+  if (healthPotion.length < 1) {
     healthPotion.push("potion");
     wolfBlood.splice(0, 1);
     water.splice(0, 5);
     wolfBloodAmount.innerText = `Wolf Blood: ${wolfBlood.length.toString()}`;
     waterAmount.innerText = `Water: ${water.length.toString()}`;
     logText.innerText = "You made a healing potion!";
-  }else if(healthPotion.length >= 5){
-    logText.innerText = "You have the maximum amount of healing potions"
+  }else if(healthPotion.length >= 1){
+    logText.innerText = "You can only carry one potion at a time!"
   }
   
 }
@@ -962,9 +983,95 @@ const handleAttack = () => {
 
   fistDamage = 5;
   swordDamage = 7;
-
-  
 }
+
+const handleBossEncounter = () => {
+  if (homes.length === 1 && axes.length === 1 && pickaxes.length === 1 && weapons.length === 1 && bed.length === 1 && iron.length === 5 && healthPotion.length === 1) {
+    showBossFight = true;
+  }
+}
+
+const handleGoToBossFight = () => {
+  monsterDead = false;
+  handleChangingScreenContent(areas[9])
+}
+
+const handleBossAttack = () => {
+  let monsterDamageAmount =
+  monsterDamage * (Math.floor(Math.random() * 11 - 1 + 1) + 1);
+  healthLevel -= monsterDamageAmount;
+  healthAmount.innerText = `Health: ${healthLevel}`;
+  logText.innerText += `The monster attacks and deals ${monsterDamageAmount}... Ouch... \n`;
+  monsterDamage = 5;
+
+  if (healthLevel <= 0) {
+    monsterDead = true;
+    logText.innerText = "**YOU TAKE FATAL DAMAGE!**"
+    setTimeout(loseFightBoss, 1500);
+  }
+};
+
+const loseFightBoss = () => {
+  handleChangingScreenContent(areas[0]);
+  healthLevel = 150;
+  healthAmount.innerText = `Health: ${healthLevel}`;
+  energyLevel = 150;
+  energyAmount.innerText = `Health: ${energyLevel}`;
+  hungerLevel = 150;
+  hungerAmount.innerText = `Health: ${hungerLevel}`;
+  logText.innerText = `You barely escape death and return home...`
+}
+
+const winGame = () => {
+  monsterDead = true;
+  handleChangingScreenContent(areas[10])
+}
+
+const handleAttackBoss = () => {
+  logText.innerText = "";
+  if (
+    fistDamage === 10 ||
+    fistDamage === 7.5 ||
+    swordDamage === 14 ||
+    swordDamage === 10.5
+  ) {
+    logText.innerText = `**COUNTER ATTACK** \n \n`;
+  }
+  let damageAmount;
+  if (weapons.length === 0) {
+    damageAmount = fistDamage * (Math.floor(Math.random() * 5 - 1 + 1) + 1);
+    monsterHealth -= damageAmount;
+  } else if (weapons.length === 1) {
+    damageAmount = swordDamage * (Math.floor(Math.random() * 5 - 1 + 1) + 1);
+    monsterHealth -= damageAmount;
+  }
+  if (monsterHealth <= 0) {
+    winGame();
+  }
+  if (monsterDead) {
+    return null;
+  }
+  narrativeText.innerText = `You face off versus the dreaded monster... \n \n Health: ${monsterHealth}`;
+  
+  logText.innerText += `You attack the monster and deal ${damageAmount} damage! \n \n`;
+
+  setTimeout(handleBossAttack, 1000);
+
+  fistDamage = 5;
+  swordDamage = 7;
+};
+
+const handleBlockBoss = () => {
+  logText.innerText = `You stance to block the next attack! \n \n`;
+  monsterDamage = 2;
+
+  let chanceForDoubleDamage = Math.floor(Math.random() * 15 - 1 + 1) + 1;
+  if (chanceForDoubleDamage > 10) {
+    fistDamage = 10;
+    swordDamage = 14;
+  }
+  setTimeout(handleBossAttack, 1000);
+};
 
 const handleBlock = () => {
   logText.innerText = `You stance to block the next attack! \n \n`
@@ -977,6 +1084,24 @@ const handleBlock = () => {
   }
   setTimeout(handleWolfAttack, 1000);
 }
+
+const handleDodgeBoss = () => {
+  logText.innerText = ``;
+  let chanceForDodge = Math.floor(Math.random() * 10 - 1 + 1) + 1;
+  if (chanceForDodge > 5) {
+    setTimeout(() => {
+      logText.innerText = "You dodged the attack";
+    }, 1000);
+    fistDamage = 7.5;
+    swordDamage = 10.5;
+  } else {
+    setTimeout(() => {
+      logText.innerText = "You failed to dodge the attack \n \n";
+    }, 1000);
+    monsterDamage = 4;
+    setTimeout(handleBossAttack, 2000);
+  }
+};
 
 const handleDodge = () => {
   logText.innerText = ``
@@ -1051,7 +1176,7 @@ const handleGoHunt = () => {
         energyAmount.innerText = `Energy: ${energyLevel}`;
       }
     }
-  } else if (animalChance >= 5) {
+  } else if (animalChance >= 3) {
     let antlerChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
     if (antlerChance > 5) {
       if (meatGained === 0) {
@@ -1146,6 +1271,22 @@ const handleGoHunt = () => {
   wolfBloodGained = 0;
 }
 
+const textTypewriting = (element: HTMLParagraphElement, text: string, i = 0) => {
+  if (i === 0){
+    element.textContent = "";
+  }
+
+  element.textContent += text[i]
+
+  if (i === text.length - 1) {
+    return;
+  }
+
+  textTimeout = setTimeout(() => textTypewriting(element, text, i + 1), 25);
+}
+
+
+
 
 
 
@@ -1153,13 +1294,21 @@ const areas: AreasArray = [
   {
     name: "Home",
     imageSrc: "./src/images/campfire.jpeg",
-    "button text": ["Travel", "Crafting", "Sleep", "Inventory", "Cooking", ""],
+    "button text": [
+      "Travel",
+      "Crafting",
+      "Sleep",
+      "Inventory",
+      "Cooking",
+      "Boss Fight",
+    ],
     "button action": [
       handleGoToTravel,
       handleCraftingMenu,
       handleSleepOption,
       handleOpenInventory,
       handleCookingMenu,
+      handleGoToBossFight,
     ],
     areaText:
       "Alone in the woods, he sat by the fire's dwindling light, a silent witness to his world reduced to ash. With nothing left but memories, he found solace in the crackling flames, a flicker of hope amidst the desolation. In the stillness of the night, he pondered his next move, knowing that from the embers of loss, resilience would rise anew.",
@@ -1177,8 +1326,7 @@ const areas: AreasArray = [
   },
   {
     name: "woods",
-    imageSrc:
-      "https://t3.ftcdn.net/jpg/05/62/56/46/360_F_562564643_OSsBfTgR7mLjKtY5TCHrwGA2auYkou2T.jpg",
+    imageSrc: "./src/images/woods.jpeg",
     "button text": [
       "Gather Wood",
       "Gather Stone",
@@ -1268,18 +1416,24 @@ const areas: AreasArray = [
   },
   {
     name: "mines",
-    imageSrc: "./src/images/campfire.jpeg",
+    imageSrc: "./src/images/mines.jpeg",
     "button text": ["Go back", "Mine", "", "", "", ""],
     "button action": [handleGoToTravel, handleMine],
     areaText: "You enter the caves...",
-    backgroundColor: "#261705",
+    backgroundColor: "#3c3d3d",
     areaLogText: "You enter the caves...",
   },
   {
     name: "wolf",
     imageSrc: "./src/images/wolf.jpeg",
-    "button text": ["Attack", "Block", "Dodge", "Flee", "", ""],
-    "button action": [handleAttack, handleBlock, handleDodge, handleFlee],
+    "button text": ["Attack", "Block", "Dodge", "Drink Potion", "Flee", ""],
+    "button action": [
+      handleAttack,
+      handleBlock,
+      handleDodge,
+      drinkHealthPotion,
+      handleFlee,
+    ],
     areaText: `You encounter a wolf! \n \n Health: ${wolfHealth}`,
     backgroundColor: "#3c3d3d",
     areaLogText: "You run into a wolf...",
@@ -1290,15 +1444,40 @@ const areas: AreasArray = [
     "button text": ["Restart", "", "", "", "", ""],
     "button action": [handleGameRestart],
     areaText: `You have died... rest in peace...`,
-    backgroundColor: "#3c3d3d",
-    areaLogText: "Rest in piece..."
+    backgroundColor: "#680506",
+    areaLogText: "Rest in piece...",
+  },
+  {
+    name: "boss",
+    imageSrc: "./src/images/monster.jpeg",
+    "button text": ["Attack", "Block", "Dodge", "Drink Potion", "Flee", ""],
+    "button action": [
+      handleAttackBoss,
+      handleBlockBoss,
+      handleDodgeBoss,
+      drinkHealthPotion,
+      handleFlee,
+    ],
+    areaText: `You face off versus the dreaded monster... \n \n Health: ${monsterHealth}`,
+    backgroundColor: "#4b4e01",
+    areaLogText: "You face the monster...",
+  },
+  {
+    name: "win game",
+    imageSrc: "./src/images/win-game.jpeg",
+    "button text": ["Restart game", "", "", "", "", ""],
+    "button action": [handleGameRestart],
+    areaText: `You have defeated the monster and reunited with your dog to live a long safe life within your cabin`,
+    backgroundColor: "#158733",
+    areaLogText: "**YOU WIN THE GAME! CONGRATS!**",
   },
 ];
+
 
 buttonStartGame.addEventListener("click", handleStartOfGameScreen)
 
 
-// buttonTravel.onclick = handleGoToTravel
+
 
 
 

@@ -28,11 +28,13 @@
 
 #### Sort sleep function for if u have a cabin
 
-<!-- Encounter with wolf, runs function that goes to new area, ends with get loot button which takes u back to woods -->
+#### Encounter with wolf, runs function that goes to new area, ends with get loot button which takes u back to woods
 
 <!-- Fix where u have e.g 2 water 1 wolfblood but it still crafts as both are above 0 -->
 
-<!-- MERGE, Boss Fight, Lore texts, choose an action, damage low energy/hunger, passive hunger/energy loss, font, transitions, instruction pop up, readME -->
+<!-- MERGE, Boss Fight, Add cabin layout for home, Lore texts, choose an action, damage low energy/hunger, passive hunger/energy loss, healing pot number in fights, fix diamond -> coal (maybe torch), font, transitions, instruction pop up, readME -->
+
+#### MAKE POTION LIMIT 1, add image for victory, change background colors
 
 
 # Order of Progress
