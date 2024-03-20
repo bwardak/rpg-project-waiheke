@@ -1,3 +1,5 @@
+@use './variables' as *;
+
 * {
   margin: 0;
   padding: 0;
@@ -9,12 +11,14 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
-  background-color: #8a7962;
+  color: $white-color;
+  background-color: $body-color;
 }
 
+
+
 #background {
-  background-color: rgb(56, 34, 8);
+  background-color: $background-color;
   border-radius: 20px;
 }
 
@@ -30,7 +34,7 @@ body {
 .game-block__img-container {
   height: 400px;
   width: 750px;
-  border: 2px solid #ae965e;
+  border: 2px solid $border-color;
 }
 
 .location-image {
@@ -43,7 +47,7 @@ body {
 .game-block__text-container {
   height: 120px;
   width: 750px;
-  border: 2px solid #ae965e;
+  border: 2px solid $border-color;
   text-align: justify;
   font-size: 16px;
   display: flex;
@@ -63,7 +67,7 @@ body {
   justify-content: space-between;
 
   .game-block__interactions-container__interactions {
-    border: 2px solid #ae965e;
+    border: 2px solid $border-color;
     width: 290px;
 
     
@@ -94,13 +98,13 @@ body {
   }
 
   .game-block__interactions-container__stats {
-    border: 2px solid #ae965e;
+    border: 2px solid $border-color;
     width: 230px;
     height: 180px;
   }
 
   .game-block__interactions-container__log {
-    border: 2px solid #ae965e;
+    border: 2px solid $border-color;
     width: 200px;
     padding: 10px;
 
@@ -167,12 +171,12 @@ body {
 
 
 .start-game {
-  border: 2px solid rgb(255, 255, 255);
+  border: 2px solid $white-color;
   height: 200px;
   width: 400px;
-  background-color: #8a7962;
+  background-color: $body-color;
   font-size: 3rem;
-  color: white;
+  color: $white-color;
   cursor: pointer;
 }
 
