@@ -1479,7 +1479,8 @@ const areas: AreasArray = [
   },
   {
     name: "crafting",
-    imageSrc: "./src/images/man-crafting.jpeg",
+    imageSrc:
+      "https://raw.githubusercontent.com/bwardak/rpg-project-waiheke/main/src/images/campfire.jpeg",
     "button text": [
       "Go back",
       "Stone Axe",
