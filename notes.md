@@ -32,6 +32,8 @@
 
 <!-- Fix where u have e.g 2 water 1 wolfblood but it still crafts as both are above 0 -->
 
+<!-- MERGE, Boss Fight, Lore texts, choose an action, damage low energy/hunger, passive hunger/energy loss, font, transitions, instruction pop up, readME -->
+
 
 # Order of Progress
 
