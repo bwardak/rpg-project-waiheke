@@ -1423,7 +1423,7 @@ const areas: AreasArray = [
   {
     name: "Home",
     imageSrc:
-      "https://yourusername.github.io/your-repo-name/src/images/campfire.jpeg",
+      "https://bwardak.github.io/rpg-project-waiheke/src/images/campfire.jpeg",
     "button text": [
       "Travel",
       "Crafting",
