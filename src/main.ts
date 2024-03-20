@@ -696,23 +696,28 @@ const handleOpenInventory = () => {
 };
 
 const drinkHealthPotion = () => {
-  healthPotion.splice(0, 1);
-  if (buttonCrafting.innerText !== "Block"){
-    buttonCrafting.innerText = `Health Pot (${healthPotion.length.toString()})`;
+  if (healthPotion.length !== 0){
+    healthPotion.splice(0, 1);
+    if (buttonCrafting.innerText !== "Block") {
+      buttonCrafting.innerText = `Health Pot (${healthPotion.length.toString()})`;
+    }
+    if (homes.length === 0 && healthLevel === 100) {
+      logText.innerText = `You already have maximum health!`;
+    } else if (homes.length === 0 && healthLevel < 100) {
+      healthLevel = 100;
+      healthAmount.innerText = `Health: ${healthLevel}`;
+      logText.innerText = `You drank a health potion...`;
+    } else if (homes.length === 1 && healthLevel === 150) {
+      logText.innerText = `You already have maximum health!`;
+    } else if (homes.length === 1 && healthLevel < 150) {
+      healthLevel = 150;
+      healthAmount.innerText = `Health: ${healthLevel}`;
+      logText.innerText = `You drank a health potion...`;
+    }
+  } else {
+    logText.innerText = "You dont have any potions..."
   }
-  if (homes.length === 0 && healthLevel === 100) {
-    logText.innerText = `You already have maximum health!`;
-  } else if (homes.length === 0 && healthLevel < 100) {
-    healthLevel = 100;
-    healthAmount.innerText = `Health: ${healthLevel}`;
-    logText.innerText = `You drank a health potion...`;
-  } else if (homes.length === 1 && healthLevel === 150) {
-    logText.innerText = `You already have maximum health!`;
-  } else if (homes.length === 1 && healthLevel < 150) {
-    healthLevel = 150;
-    healthAmount.innerText = `Health: ${healthLevel}`;
-    logText.innerText = `You drank a health potion...`;
-  }
+  
 };
 
 const eatFood = () => {
@@ -1285,38 +1290,7 @@ const handleGoHunt = () => {
     }
   } else if (animalChance >= 1) {
     handleWolfEncounter();
-    let wolfBloodChance = Math.floor(Math.random() * 10 - 1 + 1) + 1;
-    let damageTaken = Math.floor(Math.random() * 30 - 10 + 1) + 10;
-    if (wolfBloodChance > 3) {
-      if (meatGained === 0) {
-        logText.innerText += `You came across a snarling wolf: You barely manage to escape... \nYou lost ${damageTaken} health... \n`;
-        healthLevel -= damageTaken;
-        healthAmount.innerText = `Health: ${healthLevel}`;
-      } else {
-        logText.innerText += `You came across a wolf and managed to defeat it: \n+${meatGained} meat... \n+${wolfBloodGained} wolfblood... \n`;
-        for (let i: number = 0; i < meatGained; i++) {
-          meat.push("meat");
-        }
-        for (let i: number = 0; i < wolfBloodGained; i++) {
-          wolfBlood.push("antler");
-        }
-        energyLevel -= 12;
-        energyAmount.innerText = `Energy: ${energyLevel}`;
-      }
-    } else {
-      if (meatGained === 0) {
-        logText.innerText += `You came across a snarling wolf... You barely manage to escape... You lost ${damageTaken} health... \n`;
-        healthLevel -= damageTaken;
-        healthAmount.innerText = `Health: ${healthLevel}`;
-      } else {
-        logText.innerText += `You came across a wolf and managed to defeat it... +${meatGained} meat... \n`;
-        for (let i: number = 0; i < meatGained; i++) {
-          meat.push("meat");
-        }
-        energyLevel -= 12;
-        energyAmount.innerText = `Energy: ${energyLevel}`;
-      }
-    }
+    
   }
 
   if (wood.length >= 4 && antler.length >= 2 && !runSwordLogOnceStone) {
