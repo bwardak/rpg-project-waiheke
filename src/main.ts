@@ -1422,7 +1422,8 @@ const constantLoss = setInterval(loseHungerAndEnergy, 3000);
 const areas: AreasArray = [
   {
     name: "Home",
-    imageSrc: "./src/images/campfire.jpeg",
+    imageSrc:
+      "https://yourusername.github.io/your-repo-name/src/images/campfire.jpeg",
     "button text": [
       "Travel",
       "Crafting",
