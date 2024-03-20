@@ -1285,9 +1285,36 @@ const textTypewriting = (element: HTMLParagraphElement, text: string, i = 0) => 
   textTimeout = setTimeout(() => textTypewriting(element, text, i + 1), 25);
 }
 
+const loseHungerAndEnergy = () => {
+  hungerLevel -= 2;
+  energyLevel -= 2;
+  hungerAmount.innerText = `Hunger: ${hungerLevel}`;
+  energyAmount.innerText = `Energy: ${energyLevel}`;
 
+  if (energyLevel <= 0) {
+    energyLevel = 0;
+    healthLevel -= 40;
+    handleGoHome();
+    energyLevel = 50;
+    logText.innerText = `You collapsed from no energy yet somehow made your way home... remember to sleep!`
+    if (healthLevel <= 0) {
+      loseFight();
+    }
+  }
 
+  if (hungerLevel <= 0) {
+    hungerLevel = 0;
+    healthLevel -= 40;
+    handleGoHome();
+    hungerLevel = 50;
+    logText.innerText = `You collapsed from no food yet somehow made your way home... remember to sleep!`;
+    if (healthLevel <= 0) {
+      loseFight();
+    }
+  }
+}
 
+setInterval(loseHungerAndEnergy, 4000)
 
 
 const areas: AreasArray = [
