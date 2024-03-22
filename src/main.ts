@@ -352,7 +352,7 @@ const handleGoHome = () => {
     button6.style.display = "inline-flex";
   }
   if (homes.length === 1) {
-    locationImage.src = "./src/images/cabin.jpeg";
+    locationImage.src = "./images/cabin.jpeg";
     clearInterval(textTimeout);
     narrativeText.innerText = "";
     textTypewriting(
@@ -1396,7 +1396,7 @@ const constantLoss = setInterval(loseHungerAndEnergy, 3000);
 const areas: AreasArray = [
   {
     name: "Home",
-    imageSrc: "./src/images/campfire.jpeg",
+    imageSrc: "./images/campfire.jpeg",
     "button text": [
       "Travel",
       "Crafting",
@@ -1420,7 +1420,7 @@ const areas: AreasArray = [
   },
   {
     name: "travel",
-    imageSrc: "./src/images/travel.jpeg",
+    imageSrc: "./images/travel.jpeg",
     "button text": ["Home", "Woods", "Cave", "", "", ""],
     "button action": [handleGoHome, handleGoTooWoods, handleGoToCave],
     areaText:
@@ -1430,7 +1430,7 @@ const areas: AreasArray = [
   },
   {
     name: "woods",
-    imageSrc: "./src/images/woods.jpeg",
+    imageSrc: "./images/woods.jpeg",
     "button text": [
       "Gather Wood",
       "Gather Stone",
@@ -1453,7 +1453,7 @@ const areas: AreasArray = [
   },
   {
     name: "crafting",
-    imageSrc: "./src/images/man-crafting.jpeg",
+    imageSrc: "./images/man-crafting.jpeg",
     "button text": [
       "Go back",
       "Stone Axe",
@@ -1476,7 +1476,7 @@ const areas: AreasArray = [
   },
   {
     name: "inventory",
-    imageSrc: "./src/images/campfire.jpeg",
+    imageSrc: "./images/campfire.jpeg",
     "button text": [
       "Close",
       `Health Pot`,
@@ -1498,7 +1498,7 @@ const areas: AreasArray = [
   },
   {
     name: "cooking",
-    imageSrc: "./src/images/campfire.jpeg",
+    imageSrc: "./images/campfire.jpeg",
     "button text": [
       "Go back",
       "Healing potion",
@@ -1520,7 +1520,7 @@ const areas: AreasArray = [
   },
   {
     name: "mines",
-    imageSrc: "./src/images/mines.jpeg",
+    imageSrc: "./images/mines.jpeg",
     "button text": ["Go back", "Mine", "", "", "", ""],
     "button action": [handleGoToTravel, handleMine],
     areaText:
@@ -1530,7 +1530,7 @@ const areas: AreasArray = [
   },
   {
     name: "wolf",
-    imageSrc: "./src/images/wolf.jpeg",
+    imageSrc: "./images/wolf.jpeg",
     "button text": ["Attack", "Block", "Dodge", "Drink Potion", "Flee", ""],
     "button action": [
       handleAttack,
@@ -1545,7 +1545,7 @@ const areas: AreasArray = [
   },
   {
     name: "restart",
-    imageSrc: "./src/images/wolf.jpeg",
+    imageSrc: "./images/dead.jpeg",
     "button text": ["Restart", "", "", "", "", ""],
     "button action": [handleGameRestart],
     areaText: `You have died... rest in peace...`,
@@ -1554,7 +1554,7 @@ const areas: AreasArray = [
   },
   {
     name: "boss",
-    imageSrc: "./src/images/monster.jpeg",
+    imageSrc: "./images/monster.jpeg",
     "button text": ["Attack", "Block", "Dodge", "Drink Potion", "Flee", ""],
     "button action": [
       handleAttackBoss,
@@ -1569,7 +1569,7 @@ const areas: AreasArray = [
   },
   {
     name: "win game",
-    imageSrc: "./src/images/win-game.jpeg",
+    imageSrc: "./images/win-game.jpeg",
     "button text": ["Restart game", "", "", "", "", ""],
     "button action": [handleGameRestart],
     areaText: `You have defeated the monster and reunited with your dog to live a long safe life within your cabin`,
